@@ -1,0 +1,69 @@
+
+/* ===== Google reviews widget ===== */
+.gr-head{display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;margin-bottom:36px}
+.gr-score{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px 24px;box-shadow:var(--shadow-sm)}
+.gr-score .num{font:800 38px/1 var(--font-display)}
+.gr-score .sub{font-size:13.5px;color:var(--mist)}
+.gr-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:30px}
+.gr-track{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 4px 18px;scrollbar-width:thin}
+.gr-card{min-width:320px;max-width:360px;scroll-snap-align:start;flex-shrink:0}
+.gr-card .g-ic{width:22px;height:22px;float:right}
+.gr-card .when{font-size:12.5px;color:var(--mist)}
+.gr-note{text-align:center;font-size:12.5px;color:var(--mist);margin-top:6px}
+
+/* ===== Sticky mobile book bar ===== */
+.sticky-book{display:none;position:fixed;bottom:0;left:0;right:0;z-index:85;background:rgba(255,255,255,.94);
+  backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom));gap:10px}
+.sticky-book .btn{flex:1;padding:14px 10px;font-size:15px}
+@media (max-width:720px){
+  .sticky-book{display:flex}
+  .wa-float{bottom:84px}
+  body{padding-bottom:70px}
+}
+
+/* ===== Exit-intent popup ===== */
+.exit-pop .modal{max-width:480px;text-align:center}
+.exit-pop .gift{width:70px;height:70px;border-radius:22px;background:var(--gold-tint);display:grid;place-items:center;font-size:32px;margin:0 auto 18px}
+
+/* ===== Callback strip ===== */
+.callback{background:var(--gray);border:1px solid var(--line);border-radius:24px;padding:34px 38px;display:grid;grid-template-columns:1.1fr .9fr;gap:30px;align-items:center}
+.callback form{display:flex;gap:10px}
+.callback input{flex:1;border:1.5px solid var(--line);border-radius:999px;padding:14px 20px;font:400 15px var(--font-body)}
+.callback input:focus{border-color:var(--blue);outline:none}
+@media (max-width:860px){.callback{grid-template-columns:1fr}.callback form{flex-direction:column}}
+
+/* ===== Lead magnet ===== */
+.magnet{background:linear-gradient(135deg,var(--blue-tint),#fff);border:1px solid #D6E4FF;border-radius:24px;padding:36px 40px;display:grid;grid-template-columns:auto 1fr auto;gap:26px;align-items:center}
+.magnet .doc{width:64px;height:80px;background:#fff;border:1px solid var(--line);border-radius:8px 18px 8px 8px;box-shadow:var(--shadow-md);display:grid;place-items:center;font-size:28px}
+@media (max-width:860px){.magnet{grid-template-columns:1fr;text-align:center}.magnet .doc{margin:0 auto}}
+
+/* ===== Blog article ===== */
+.article{max-width:760px;margin:0 auto}
+.article-hero{border-radius:26px;padding:48px 44px;color:#fff;margin-bottom:40px}
+.article-hero .cat{font:600 12.5px var(--font-body);letter-spacing:.1em;text-transform:uppercase;opacity:.85}
+.article-hero h1{color:#fff;font-size:clamp(28px,3.6vw,42px);margin-top:10px}
+.article-hero .meta{margin-top:16px;font-size:14px;opacity:.85}
+.article-body p{margin:0 0 20px;color:#333B45}
+.article-body h2{font-size:24px;margin:36px 0 14px}
+.article-body em{font-style:italic}
+.article-cta{margin-top:48px}
+.post-nav{display:flex;justify-content:space-between;gap:14px;margin-top:44px;flex-wrap:wrap}
+
+/* ===== Suburb page ===== */
+.school-chips{display:flex;flex-wrap:wrap;gap:9px;margin:18px 0 6px}
+.school-chips span{font:600 13.5px var(--font-body);background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 16px}
+.area-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.area-grid a{border:1.5px solid var(--line);border-radius:14px;padding:16px 18px;font:600 15px var(--font-body);background:#fff;transition:.15s;display:flex;justify-content:space-between;align-items:center}
+.area-grid a:hover{border-color:var(--blue);color:var(--blue)}
+@media (max-width:860px){.area-grid{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.area-grid{grid-template-columns:1fr}}
+
+/* ===== Form states ===== */
+.field input.err,.field select.err,.field textarea.err{border-color:#E5484D}
+.field .err-msg{font-size:12.5px;color:#E5484D;display:none}
+.field.invalid .err-msg{display:block}
+.hp{position:absolute!important;left:-9999px!important;opacity:0;height:0;overflow:hidden}
+.btn[disabled]{opacity:.6;pointer-events:none}
+.spin{width:16px;height:16px;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+img{height:auto}

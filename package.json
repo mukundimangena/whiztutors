@@ -1,0 +1,10 @@
+{
+  "name": "whiz-tutoring-site",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Whiz Tutoring - lead-generation static site with serverless enquiry + Google reviews functions",
+  "scripts": {
+    "build": "node build.js",
+    "preview": "npx serve dist"
+  }
+}

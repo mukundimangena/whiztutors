@@ -1,10 +1,10 @@
 // ============ WHIZ TUTORING — SITE DATA ============
 const SITE = {
   name: 'Whiz Tutoring',
-  domain: 'https://www.whiztutoring.co.za', // update when domain is live
+  domain: 'https://www.whiztutors.co.za', // update when domain is live
   email: 'whiztutors@gmail.com',
   phone: '+27 21 000 0000',
-  whatsapp: '27600000000', // digits only, for wa.me links
+  whatsapp: '27624204922', // digits only, for wa.me links
   areaServed: 'Cape Town, South Africa',
   rating: 4.9,
   reviewCount: 640,

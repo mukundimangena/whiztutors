@@ -9,6 +9,8 @@
 //   TURNSTILE_SECRET    – optional, Cloudflare Turnstile secret for CAPTCHA verification
 
 const RATE = new Map(); // per-IP soft rate limit (per warm instance)
+const RESEND_API_KEY="re_Sb8HwQ2T_MbVtrN63u1qAnWycBPVpSxKw"
+const NOTIFY_EMAIL="whiztutors@gmail.com"
 
 exports.handler = async (event) => {
   const headers = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' };
@@ -75,7 +77,7 @@ exports.handler = async (event) => {
           <li>We hand-pick 2–3 screened tutors that match your subject, grade and schedule.</li>
           <li>We contact you within <strong>24 hours</strong> on WhatsApp or email to confirm your <strong>half-price trial lesson</strong>.</li>
         </ol>
-        <p>Need us sooner? WhatsApp us on <a href="https://wa.me/27600000000" style="color:#0B5FFF">+27 60 000 0000</a>.</p>
+        <p>Need us sooner? WhatsApp us on <a href="https://wa.me/276624204922" style="color:#0B5FFF">+27 62 420 4922</a>.</p>
         <p style="margin-top:20px">Talk soon,<br><strong>The Whiz Tutoring Team</strong><br><span style="color:#8B94A3;font-size:13px">Cape Town · Online across South Africa & Zambia</span></p>
       </div>
     </div>`;

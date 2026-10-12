@@ -1,0 +1,4 @@
+.env
+_backup_before_fixes/
+node_modules/
+netlify/functions/resend.js

@@ -3,12 +3,23 @@ const SITE = {
   name: 'Whiz Tutoring',
   domain: 'https://www.whiztutors.co.za', // update when domain is live
   email: 'whiztutors@gmail.com',
-  phone: '+27 21 000 0000',
+  phone: '+27 62 420 4922', // shown on the contact page and in Google's business data
   whatsapp: '27624204922', // digits only, for wa.me links
   areaServed: 'Cape Town, South Africa',
   rating: 4.9,
   reviewCount: 640,
+  // Google Business Profile → "Ask for reviews" gives you this link. The "Leave a review" button stays hidden until it's set.
   googleReviewUrl: 'https://g.page/r/YOUR_GOOGLE_REVIEW_LINK/review',
+  facebook: '',   // e.g. 'https://facebook.com/whiztutors' (icon hidden while empty)
+  instagram: '',  // e.g. 'https://instagram.com/whiztutors'
+  // ---- Public claims: only publish numbers you can back up. Set to '' / [] to hide. ----
+  familiesHelped: '1,200+',
+  stats: [ // [number, suffix, label]
+    [5000, '+', 'Lessons completed'],
+    [95, '%', 'Student satisfaction'],
+    [300, '+', 'Qualified tutors'],
+    [9, ' yrs', 'Helping students succeed']
+  ],
   googleMapsUrl: 'https://maps.google.com/?q=Whiz+Tutoring+Cape+Town'
 };
 
@@ -20,7 +31,7 @@ const SUBJECT_PAGES = [
     lead:'One-on-one maths tutoring across Cape Town — Southern Suburbs, Atlantic Seaboard and Northern Suburbs — from top UCT and Stellenbosch students. At your home or online.',
     subhead:'Why Cape Town families choose Whiz for maths',
     points:['Tutors with 80%+ for matric maths and strong university results','In-person lessons at your home, or online with an interactive whiteboard','CAPS, IEB and Cambridge syllabi covered, Grades 4–12','Structured past-paper practice before every test and exam','Progress reports to parents after every lesson'],
-    body:'Mathematics is the subject we get asked about most — and the one where the right tutor makes the biggest difference. Our Cape Town maths tutors are current students and graduates from UCT and Stellenbosch who earned distinctions in the exact syllabus your child is studying. Lessons rebuild fundamentals first (the Grade 9–10 gaps that quietly cost matric marks), then layer on exam technique with timed past-paper practice. Whether your child is in Claremont, Durbanville or learning online from anywhere in South Africa, we match tutor personality to student — because a learner who likes their tutor does the homework.'},
+    body:'Mathematics is the subject we get asked about most — and the one where the right tutor makes the biggest difference. Our Cape Town maths tutors are current students and graduates from UCT and Stellenbosch who earned distinctions in the exact syllabus your child is studying. Lessons rebuild fundamentals first (the Grade 9–10 gaps that quietly cost matric marks), then layer on exam technique with timed past-paper practice.'},
   { slug:'physics-tutor-cape-town', kw:'Physics Tutor Cape Town', subject:'Physical Sciences', icon:'⚗️',
     title:'Physics Tutors in Cape Town | Physical Sciences Gr 10–12',
     metaDesc:'Physical Sciences tutors in Cape Town from UCT engineering & science faculties. Physics & chemistry, CAPS/IEB/IGCSE. Home or online lessons. Book a trial.',
@@ -240,12 +251,12 @@ const POSTS = [
 ];
 
 const TUTORS = [
-  {name:'Thandi Nkosi',ini:'TN',c:'#0B5FFF',uni:'University of Cape Town',deg:'BSc Actuarial Science',subs:['Mathematics','Statistics'],yrs:4,lessons:620},
-  {name:'James van der Merwe',ini:'JV',c:'#00BFA6',uni:'Stellenbosch University',deg:'BEng Mechanical (Hons)',subs:['Physical Sciences','Engineering'],yrs:5,lessons:810},
-  {name:'Aisha Patel',ini:'AP',c:'#6C4CF1',uni:'University of the Witwatersrand',deg:'BCom Accounting Science',subs:['Accounting','Economics'],yrs:3,lessons:450},
-  {name:'Sipho Mabaso',ini:'SM',c:'#FF7A45',uni:'University of Pretoria',deg:'BSc Computer Science',subs:['Programming','Mathematics'],yrs:4,lessons:530},
-  {name:'Emma Botha',ini:'EB',c:'#E0559B',uni:'University of Cape Town',deg:'BA English & Linguistics',subs:['English','History'],yrs:6,lessons:940},
-  {name:'Mwansa Chileshe',ini:'MC',c:'#0AA5C2',uni:'University of Johannesburg',deg:'BSc Biochemistry (Hons)',subs:['Biology','Chemistry'],yrs:3,lessons:380}
+  {name:'Thandi Nkosi',photo:'tutors/thandi.jpg',ini:'TN',c:'#0B5FFF',uni:'University of Cape Town',deg:'BSc Actuarial Science',subs:['Mathematics','Statistics'],yrs:4,lessons:620},
+  {name:'James van der Merwe',photo:'tutors/james.jpg',ini:'JV',c:'#00BFA6',uni:'Stellenbosch University',deg:'BEng Mechanical (Hons)',subs:['Physical Sciences','Engineering'],yrs:5,lessons:810},
+  {name:'Aisha Patel',photo:'tutors/aisha.jpg',ini:'AP',c:'#6C4CF1',uni:'University of the Witwatersrand',deg:'BCom Accounting Science',subs:['Accounting','Economics'],yrs:3,lessons:450},
+  {name:'Sipho Mabaso',photo:'tutors/sipho.jpg',ini:'SM',c:'#FF7A45',uni:'University of Pretoria',deg:'BSc Computer Science',subs:['Programming','Mathematics'],yrs:4,lessons:530},
+  {name:'Emma Botha',photo:'tutors/emma.jpg',ini:'EB',c:'#E0559B',uni:'University of Cape Town',deg:'BA English & Linguistics',subs:['English','History'],yrs:6,lessons:940},
+  {name:'Mwansa Chileshe',photo:'tutors/mwansa.jpg',ini:'MC',c:'#0AA5C2',uni:'University of Johannesburg',deg:'BSc Biochemistry (Hons)',subs:['Biology','Chemistry'],yrs:3,lessons:380}
 ];
 
 const STORIES = [

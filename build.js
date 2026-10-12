@@ -12,11 +12,43 @@ fs.mkdirSync(path.join(DIST, 'assets'), { recursive: true });
 const css = fs.readFileSync('src/base.css', 'utf8') + fs.readFileSync('src/extra.css', 'utf8');
 fs.writeFileSync(path.join(DIST, 'assets/style.css'), css);
 fs.copyFileSync('src/main.js', path.join(DIST, 'assets/main.js'));
+// Real photos: drop files into src/img/ (see src/img/README.md). Anything missing falls back to initials/illustration.
+if (fs.existsSync('src/img')) fs.cpSync('src/img', path.join(DIST, 'assets/img'), { recursive: true, filter: f => !f.endsWith('.md') });
+const hasImg = f => !!f && fs.existsSync(path.join('src/img', f));
+const tutorFace = t => hasImg(t.photo) ? `<img src="/assets/img/${t.photo}" alt="${t.name}, Whiz tutor" loading="lazy" width="200" height="200">` : t.ini;
 
 const ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 const TICK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>';
 const WA_SVG = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.1-1.3A10 10 0 1 0 12 2zm5.4 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5s.8 1.9.8 2c.1.1.1.3 0 .5l-.4.6c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1.1 2.2 1.4 2.5 1.5.3.1.5.1.6-.1.2-.2.7-.9.9-1.2.2-.3.4-.2.6-.1l1.9.9c.2.1.4.2.5.3 0 .1 0 .8-.3 1.6z"/></svg>';
 const jsonld = obj => `<script type="application/ld+json">${JSON.stringify(obj)}</script>`;
+
+// ---------- line icons (replace emoji, which render differently on every phone) ----------
+const ICON_PATHS = {
+  maths: '<path d="M5 12h14"/><circle cx="12" cy="6.5" r="1.4" fill="currentColor"/><circle cx="12" cy="17.5" r="1.4" fill="currentColor"/>',
+  science: '<path d="M9 3h6M10 3v6L4.5 18.5A1.7 1.7 0 0 0 6 21h12a1.7 1.7 0 0 0 1.5-2.5L14 9V3"/><path d="M7.5 15h9"/>',
+  english: '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/>',
+  accounting: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  matric: '<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2.5 9 2.5 12 0v-5M22 9v6"/>',
+  globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+  engineering: '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>',
+  laptop: '<rect x="4" y="4" width="16" height="11" rx="1.5"/><path d="M2 19h20"/>',
+  home: '<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10M10 20v-5h4v5"/>',
+  chat: '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>',
+  leaf: '<path d="M5 19C5 10 11 4 20 4c0 9-6 15-15 15z"/><path d="M5 19l8-8"/>',
+  trend: '<path d="M3 17l6-6 4 4 8-8M14 7h7v7"/>',
+  code: '<path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/>',
+  more: '<circle cx="5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="19" cy="12" r="1.6" fill="currentColor"/>',
+  calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+};
+const ICON_FOR = { 'Mathematics':'maths', 'Physical Sciences':'science', 'English':'english', 'Accounting':'accounting', 'Matric (Grade 12)':'matric',
+  'Cambridge & IGCSE':'globe', 'Engineering':'engineering', 'Engineering (university)':'engineering', 'Online — any subject':'laptop', 'Private tutoring':'home',
+  'Afrikaans':'chat', 'Life Sciences / Biology':'leaf', 'Economics':'trend', 'Programming / IT':'code', 'Multiple / other':'more' };
+const svgIcon = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON_PATHS[k]}</svg>`;
+const subjIcon = (name, fallback = '') => ICON_FOR[name] ? svgIcon(ICON_FOR[name]) : fallback;
+// "27624204922" -> "+27 62 420 4922"
+const waDisplay = '+' + SITE.whatsapp.replace(/^(\d{2})(\d{2})(\d{3})(\d+)$/, '$1 $2 $3 $4');
+const isSet = u => !!u && !/YOUR_|^#$/.test(u);
+const CAPE_UNIS = /Cape Town|Stellenbosch|Western Cape|Cape Peninsula/;
 
 // ---------- shared structured data ----------
 const orgSchema = {
@@ -62,6 +94,7 @@ function layout({ title, desc, canonical, body, schemas = [], ogType = 'website'
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/style.css">
+<script>document.documentElement.classList.add('js')</script>
 ${jsonld(orgSchema)}
 ${jsonld(websiteSchema)}
 ${schemas.map(jsonld).join('\n')}
@@ -113,8 +146,8 @@ function footerHTML() {
         <a href="/" class="logo" style="color:#fff"><span class="logo-mark">W</span>Whiz<em>Tutoring</em></a>
         <p>Premium one-on-one tutoring from South Africa's top university students and graduates. Cape Town & online nationwide.</p>
         <div class="foot-social">
-          <a href="#" aria-label="Facebook"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.4c0-.9.3-1.6 1.7-1.6h1.5V4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.9H7.8V14h2.7v8h3z"/></svg></a>
-          <a href="#" aria-label="Instagram"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor"/></svg></a>
+          ${isSet(SITE.facebook) ? `<a href="${SITE.facebook}" target="_blank" rel="noopener" aria-label="Facebook"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.4c0-.9.3-1.6 1.7-1.6h1.5V4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.9H7.8V14h2.7v8h3z"/></svg></a>` : ''}
+          ${isSet(SITE.instagram) ? `<a href="${SITE.instagram}" target="_blank" rel="noopener" aria-label="Instagram"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor"/></svg></a>` : ''}
           <a href="https://wa.me/${SITE.whatsapp}" aria-label="WhatsApp">${WA_SVG.replace('viewBox', 'width="17" height="17" viewBox')}</a>
         </div>
       </div>
@@ -148,7 +181,7 @@ function footerHTML() {
     </div>
     <div class="foot-bottom">
       <span>© 2026 Whiz Tutoring (Pty) Ltd · Cape Town, South Africa</span>
-      <span><a href="/sitemap.xml" style="color:inherit">Sitemap</a> · <a href="#" style="color:inherit">Privacy Policy</a> · <a href="#" style="color:inherit">Terms</a></span>
+      <span><a href="/sitemap.xml" style="color:inherit">Sitemap</a> · <a href="/privacy/" style="color:inherit">Privacy Policy</a></span>
     </div>
   </div>
 </footer>`;
@@ -167,30 +200,64 @@ function chromeHTML() {
   <div class="modal">
     <button class="modal-close" onclick="closeBooking()" aria-label="Close">✕</button>
     <h3 id="bookTitle">Book a Tutor</h3>
-    <p class="sub">Half-price trial lesson · we reply within 24 hours · no payment now.</p>
-    <form data-lead="booking" novalidate>
+    <p class="sub">Takes about a minute · half-price first lesson · no payment now · free rematch if it\u2019s not the right fit.</p>
+    <form data-lead="booking" class="wizard" novalidate>
       <div class="hp" aria-hidden="true"><label>Leave this field empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
-      <div class="form-grid">
-        <div class="field"><label for="f_student">Student name *</label><input id="f_student" name="student" type="text" required autocomplete="name"><span class="err-msg"></span></div>
-        <div class="field"><label for="f_parent">Parent name (if applicable)</label><input id="f_parent" name="parent" type="text"></div>
-        <div class="field"><label for="f_email">Email address *</label><input id="f_email" name="email" type="email" required autocomplete="email"><span class="err-msg"></span></div>
-        <div class="field"><label for="f_phone">Phone number *</label><input id="f_phone" name="phone" type="tel" required autocomplete="tel"><span class="err-msg"></span></div>
-        <div class="field"><label for="f_wa">WhatsApp number</label><input id="f_wa" name="whatsapp" type="tel" placeholder="If different from phone"></div>
-        <div class="field"><label for="f_grade">Grade *</label><select id="f_grade" name="grade" required><option value="">Select grade…</option><option>Grade 1–3</option><option>Grade 4–7</option><option>Grade 8–9</option><option>Grade 10</option><option>Grade 11</option><option>Matric (Grade 12)</option><option>IGCSE / AS / A-Level</option><option>IB</option><option>University</option></select><span class="err-msg"></span></div>
-        <div class="field"><label for="f_school">School</label><input id="f_school" name="school" type="text" placeholder="e.g. Westerford High"></div>
-        <div class="field"><label for="f_subject">Subject(s) *</label><select id="f_subject" name="subject" required><option value="">Select subject…</option><option>Mathematics</option><option>Physical Sciences</option><option>English</option><option>Accounting</option><option>Afrikaans</option><option>Life Sciences / Biology</option><option>Economics</option><option>Programming / IT</option><option>Engineering (university)</option><option>Multiple / other</option></select><span class="err-msg"></span></div>
-        <div class="field full"><span class="field label" style="font:600 14px var(--font-body)">Preferred lesson type *</span>
-          <div class="radio-cards">
-            <label><input type="radio" name="lesson_type" value="Online" checked> 💻 Online</label>
-            <label><input type="radio" name="lesson_type" value="In person"> 🏠 In person</label>
-          </div>
+      <div class="wz-progress" aria-hidden="true"><span id="wzBar"></span></div>
+      <div class="wz-crumbs" id="wzCrumbs"></div>
+
+      <fieldset class="wz-step" data-step="subject">
+        <legend>What subject do you need help with?</legend>
+        <div class="wz-tiles">${BOOK_SUBJECTS.map(([n, ic]) => `<label class="wz-tile"><input type="radio" name="subject" value="${n}"><span class="wz-ic">${subjIcon(n, ic)}</span><span>${n}</span></label>`).join('')}</div>
+      </fieldset>
+
+      <fieldset class="wz-step" data-step="curriculum" hidden>
+        <legend>Which curriculum is your child on?</legend>
+        <div class="wz-tiles">${CURRICULA.map(([n, d]) => `<label class="wz-tile wz-tile-text"><input type="radio" name="curriculum" value="${n}"><span><b>${n}</b><small>${d}</small></span></label>`).join('')}</div>
+        <div class="field" style="margin-top:18px"><label for="f_grade">Grade *</label><select id="f_grade" name="grade" required><option value="">Select grade…</option><option>Grade 1–3</option><option>Grade 4–7</option><option>Grade 8–9</option><option>Grade 10</option><option>Grade 11</option><option>Matric (Grade 12)</option><option>IGCSE / AS / A-Level</option><option>IB</option><option>University</option></select><span class="err-msg"></span></div>
+      </fieldset>
+
+      <fieldset class="wz-step" data-step="mode" hidden>
+        <legend>How would you like lessons?</legend>
+        <div class="wz-tiles wz-two">
+          <label class="wz-tile wz-tile-big"><input type="radio" name="lesson_type" value="Online"><span class="wz-ic">${svgIcon('laptop')}</span><span><b>Online</b><small>Live whiteboard lessons from anywhere in SA or Zambia</small></span></label>
+          <label class="wz-tile wz-tile-big"><input type="radio" name="lesson_type" value="In person"><span class="wz-ic">${svgIcon('home')}</span><span><b>In person</b><small>A tutor comes to your home in Cape Town</small></span></label>
         </div>
-        <div class="field"><label for="f_area">Area / suburb (Cape Town)</label><select id="f_area" name="area"><option value="">Select area (if in person)…</option>${SUBURBS.map(s => `<option>${s.name}</option>`).join('')}<option>Other Cape Town</option><option>Outside Cape Town (online)</option></select></div>
-        <div class="field"><label for="f_days">Preferred days</label><input id="f_days" name="preferred_days" type="text" placeholder="e.g. Tue & Thu"></div>
-        <div class="field"><label for="f_times">Preferred times</label><input id="f_times" name="preferred_times" type="text" placeholder="e.g. after 16:00"></div>
-        <div class="field full"><label for="f_notes">Additional notes</label><textarea id="f_notes" name="notes" placeholder="Goals, current marks, anything that helps us match well…"></textarea></div>
+      </fieldset>
+
+      <fieldset class="wz-step" data-step="area" hidden>
+        <legend>Where should the tutor meet you?</legend>
+        ${[...new Set(SUBURBS.map(x => x.region))].map(r => `<p class="wz-group">${r}</p><div class="wz-chips">${SUBURBS.filter(x => x.region === r).map(x => `<label><input type="radio" name="area" value="${x.name}"><span>${x.name}</span></label>`).join('')}</div>`).join('')}
+        <p class="wz-group">Somewhere else?</p>
+        <div class="wz-chips"><label><input type="radio" name="area" value="Other Cape Town"><span>Other Cape Town area</span></label></div>
+        <div class="field" id="wzOtherArea" hidden style="margin-top:12px"><label for="f_area_other">Which suburb?</label><input id="f_area_other" name="area_other" type="text" placeholder="e.g. Kenilworth"></div>
+      </fieldset>
+
+      <fieldset class="wz-step" data-step="details" hidden>
+        <legend>Last step — where can we reach you?</legend>
+        <p class="wz-hint">Three quick details and you're done. We'll WhatsApp you to confirm the rest.</p>
+        <div class="form-grid">
+        <div class="field full"><label for="f_student">Your name *</label><input id="f_student" name="student" type="text" required autocomplete="name" placeholder="Parent or student"><span class="err-msg"></span></div>
+        <div class="field"><label for="f_phone">WhatsApp / phone number *</label><input id="f_phone" name="phone" type="tel" required autocomplete="tel" placeholder="e.g. 082 123 4567"><span class="err-msg"></span></div>
+        <div class="field"><label for="f_email">Email <small>(optional, for your confirmation)</small></label><input id="f_email" name="email" type="email" autocomplete="email"><span class="err-msg"></span></div>
+        </div>
+        <details class="wz-more">
+          <summary>Add more details (optional)</summary>
+          <div class="form-grid">
+          <div class="field"><label for="f_parent">Student's name</label><input id="f_parent" name="parent" type="text" placeholder="If you're the parent"></div>
+          <div class="field"><label for="f_school">School</label><input id="f_school" name="school" type="text" placeholder="e.g. Westerford High"></div>
+          <div class="field"><label for="f_days">Preferred days</label><input id="f_days" name="preferred_days" type="text" placeholder="e.g. Tue & Thu"></div>
+          <div class="field"><label for="f_times">Preferred times</label><input id="f_times" name="preferred_times" type="text" placeholder="e.g. after 16:00"></div>
+          <div class="field full"><label for="f_notes">Anything else?</label><textarea id="f_notes" name="notes" placeholder="Goals, current marks, how your child learns best…"></textarea></div>
+          </div>
+        </details>
+      </fieldset>
+
+      <div class="wz-nav">
+        <button type="button" class="btn btn-ghost btn-sm" id="wzBack" hidden>← Back</button>
+        <button type="button" class="btn btn-primary" id="wzNext" hidden>Continue</button>
+        <button class="btn btn-primary" type="submit" id="wzSubmit" hidden>Send enquiry</button>
       </div>
-      <button class="btn btn-primary btn-lg" type="submit" style="width:100%;margin-top:22px">Send enquiry</button>
       <p class="form-note">Protected against spam. By sending, you agree to be contacted about your enquiry. We never share your details.</p>
       <div class="form-success" style="display:none;text-align:center;padding:26px 0">
         <div class="tick" style="width:70px;height:70px;border-radius:50%;background:var(--teal-tint);color:var(--teal);display:grid;place-items:center;margin:0 auto 18px"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M4 13l5 5L20 6"/></svg></div>
@@ -218,25 +285,28 @@ function chromeHTML() {
 <div class="toast" id="toast">${TICK}<span id="toastMsg"></span></div>`;
 }
 
+// ---------- booking wizard options ----------
+const BOOK_SUBJECTS = [['Mathematics','➗'],['Physical Sciences','⚗️'],['English','📖'],['Accounting','📊'],['Afrikaans','🗣️'],['Life Sciences / Biology','🧬'],['Economics','📈'],['Programming / IT','💻'],['Engineering (university)','⚙️'],['Multiple / other','✨']];
+const CURRICULA = [['CAPS (NSC)','Government & most independent schools'],['IEB','Independent Examinations Board schools'],['Cambridge','IGCSE, AS & A-Level'],['IB','International Baccalaureate'],['University','First-year & beyond'],['Not sure','We’ll help you work it out']];
+
 // ---------- shared blocks ----------
-const statsBlock = `
+const statsBlock = SITE.stats && SITE.stats.length ? `
 <div class="container reveal">
   <div class="stats" id="statsBand">
-    <div class="stat"><b><span class="count" data-to="5000">0</span><em>+</em></b><span>Lessons completed</span></div>
-    <div class="stat"><b><span class="count" data-to="95">0</span><em>%</em></b><span>Student satisfaction</span></div>
-    <div class="stat"><b><span class="count" data-to="300">0</span><em>+</em></b><span>Qualified tutors</span></div>
-    <div class="stat"><b><span class="count" data-to="9">0</span><em> yrs</em></b><span>Helping students succeed</span></div>
+    ${SITE.stats.map(([n, suf, label]) => `<div class="stat"><b><span class="count" data-to="${n}">${n.toLocaleString('en-ZA')}</span><em>${suf}</em></b><span>${label}</span></div>`).join('')}
   </div>
-</div>`;
+</div>` : '';
 
 const trustStrip = `
-<section class="trusted reveal" aria-label="Trust signals">
+<section class="trusted reveal" aria-label="Where our tutors study">
   <div class="container">
-    <p>Carefully screened tutors · background checked · from South Africa's top universities</p>
+    <p>Our tutors study at, or graduated from</p>
     <div class="logo-row">
-      <span>◆ UCT</span><span>◆ Stellenbosch</span><span>◆ Wits</span><span>◆ UP</span><span>◆ UJ</span>
-      <span>SACS <i>·</i></span><span>Bishops <i>·</i></span><span>Rondebosch <i>·</i></span><span>Westerford</span>
+      <span>UCT</span><span>Stellenbosch</span><span>Wits</span><span>UP</span><span>UJ</span>
     </div>
+    <ul class="trust-points">
+      <li>${TICK}Interviewed &amp; subject-tested</li><li>${TICK}Background checked</li><li>${TICK}Free rematch if it\u2019s not the right fit</li>
+    </ul>
   </div>
 </section>`;
 
@@ -265,7 +335,7 @@ function reviewsBlock(h2 = 'What Cape Town parents say on Google') {
     <p class="gr-note" id="grNote">Reviews refresh automatically from our Google Business Profile.</p>
     <div class="gr-actions reveal">
       <a class="btn btn-ghost btn-sm" href="${SITE.googleMapsUrl}" target="_blank" rel="noopener">Read more reviews on Google</a>
-      <a class="btn btn-teal btn-sm" href="${SITE.googleReviewUrl}" target="_blank" rel="noopener">Leave a review</a>
+      ${isSet(SITE.googleReviewUrl) ? `<a class="btn btn-teal btn-sm" href="${SITE.googleReviewUrl}" target="_blank" rel="noopener">Leave a review</a>` : ''}
     </div>
   </div>
 </section>`;
@@ -334,12 +404,17 @@ const write = (rel, html) => {
 <header class="hero">
   <div class="container hero-grid">
     <div>
-      <span class="hero-badge"><span class="dot"></span> Trusted by 1,200+ families in Cape Town & beyond</span>
+      ${SITE.familiesHelped ? `<span class="hero-badge"><span class="dot"></span> Trusted by ${SITE.familiesHelped} families in Cape Town &amp; beyond</span>` : `<span class="hero-badge"><span class="dot"></span> Cape Town &amp; online across South Africa</span>`}
       <h1>Cape Town's top <span class="hl">private tutors<svg viewBox="0 0 320 24" aria-hidden="true"><path d="M6 16 C 80 8, 160 20, 314 10"/></svg></span> — at your home or online</h1>
-      <p class="lead">Personalized one-on-one tutoring from carefully selected tutors at South Africa's leading universities. Every subject, Grades 4 to university — matched to how your child learns.</p>
+      <p class="lead">Personalised one-on-one tutoring from carefully selected students and graduates of South Africa's leading universities. Every subject, Grades 4 to university — matched to how your child learns.</p>
       <div class="hero-ctas">
         <button class="btn btn-primary btn-lg" onclick="openBooking()">Book a Tutor ${ARROW}</button>
-        <a class="btn btn-ghost btn-lg" href="/become-a-tutor/">Become a Tutor</a>
+        <a class="btn btn-ghost btn-lg btn-wa" href="https://wa.me/${SITE.whatsapp}?text=Hi%20Whiz%20Tutoring!%20I%E2%80%99d%20like%20to%20enquire%20about%20a%20tutor." target="_blank" rel="noopener">${WA_SVG.replace('viewBox', 'width="20" height="20" viewBox')} Chat on WhatsApp</a>
+      </div>
+      <p class="hero-reassure">${TICK}<span><b>From R280/hour</b> · first lesson half price · free rematch if it\u2019s not the right fit</span></p>
+      <div class="quick-start">
+        <p>Or start here — what do you need help with?</p>
+        <div>${['Mathematics', 'Physical Sciences', 'English', 'Accounting', 'Multiple / other'].map(x => `<button type="button" onclick="openBooking('${x}')">${x === 'Multiple / other' ? 'Something else' : x}</button>`).join('')}</div>
       </div>
       <div class="hero-proof">
         <div class="avatar-row" aria-hidden="true">
@@ -349,7 +424,8 @@ const write = (rel, html) => {
         <div><span class="stars" aria-label="4.9 out of 5 star Google rating">★★★★★</span><br>${SITE.rating} on Google · ${SITE.reviewCount}+ reviews</div>
       </div>
     </div>
-    <div class="hero-visual" aria-hidden="true">
+    <div class="hero-visual${hasImg('hero.jpg') ? ' has-photo' : ''}" aria-hidden="true">
+      ${hasImg('hero.jpg') ? '<div class="hero-photo"><img src="/assets/img/hero.jpg" alt="" width="900" height="1000" fetchpriority="high"></div>' : ''}
       <div class="lesson-card lc-main">
         <div class="lc-head">
           <div class="lc-avatar" style="background:linear-gradient(135deg,#0B5FFF,#2E7BFF)">TN</div>
@@ -367,7 +443,7 @@ const write = (rel, html) => {
         <div class="grade-ring" id="gradeRing"><svg width="58" height="58" viewBox="0 0 58 58" fill="none"><circle class="track" cx="29" cy="29" r="24" stroke-width="6"/><circle class="fill" cx="29" cy="29" r="24" stroke-width="6"/></svg><b>81%</b></div>
         <div class="txt"><b>Term result</b><span>52% → 81% · <span class="up">+29</span></span></div>
       </div>
-      <div class="lesson-card lc-next"><div class="cal">📅</div><div><b>Next lesson booked</b><span>Thursday · 16:00 · Claremont</span></div></div>
+      <div class="lesson-card lc-next"><div class="cal">${svgIcon('calendar')}</div><div><b>Next lesson booked</b><span>Thursday · 16:00 · Claremont</span></div></div>
     </div>
   </div>
 </header>
@@ -376,22 +452,17 @@ ${statsBlock}
 <section class="section" aria-labelledby="subj-h"><div class="container">
   <div class="section-head reveal"><span class="eyebrow">Subjects</span><h2 id="subj-h">Expert tutoring in every subject that matters</h2>
   <p class="lead">From foundation phase to matric, IEB, Cambridge and first-year university — taught by tutors who aced it themselves.</p></div>
-  <div class="grid g3">
-    ${SUBJECT_CARDS.map(s => `<a class="card subject-card reveal" href="${s.link}">
-      <div class="icon" style="background:${s.bg}">${s.icon}</div><h3>${s.name}</h3><p>${s.desc}</p>
-      <span class="go">Find a tutor ${ARROW}</span></a>`).join('')}
-  </div>
+  <ul class="subject-list reveal">
+    ${SUBJECT_CARDS.map(s => `<li><a href="${s.link}"><span class="sl-ic" style="background:${s.bg}">${subjIcon(s.name, s.icon)}</span><span class="sl-txt"><b>${s.name}</b><small>${s.desc}</small></span>${ARROW}</a></li>`).join('')}
+  </ul>
 </div></section>
 <section class="section gray-band" aria-labelledby="why-h"><div class="container">
   <div class="section-head center reveal"><span class="eyebrow">Why Whiz</span><h2 id="why-h">Tutoring that treats your child as a person, not a timeslot</h2></div>
   <div class="grid g3">
     ${[
-      ['M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z', 'Carefully screened tutors', 'Subject tests, teaching demos, interviews and background checks. Fewer than 1 in 8 applicants join.'],
-      ['M12 2l2.4 5.3 5.6.6-4.2 3.9 1.2 5.6L12 14.8 7 17.4l1.2-5.6L4 7.9l5.6-.6L12 2z', 'Top university students & graduates', 'Tutors from UCT, Stellenbosch, Wits, UP and UJ who recently aced the exact work your child is doing.'],
-      ['M4 6h16M4 12h16M4 18h10', 'Online and in-person lessons', 'Interactive online whiteboard lessons nationwide, or face-to-face at your Cape Town home.'],
-      ['M12 7v5l3 3M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z', 'Flexible scheduling', 'Evenings, weekends and exam-season intensives. Reschedule free with 24 hours\u2019 notice.'],
-      ['M3 17l6-6 4 4 8-8M14 7h7v7', 'Progress tracking', 'A short report after every lesson and a full term review — parents always know where things stand.'],
-      ['M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6', 'Fair, transparent pricing', 'From R280/hour with no signup fees or contracts. Your first lesson is a half-price trial.']
+      ['M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z', 'Screened tutors from top universities', 'UCT, Stellenbosch, Wits, UP and UJ students and graduates. Subject tests, teaching demos and background checks — fewer than 1 in 8 applicants join.'],
+      ['M12 7v5l3 3M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z', 'At home or online, on your schedule', 'Face-to-face anywhere in Cape Town or live whiteboard lessons nationwide. Evenings, weekends and exam-season intensives.'],
+      ['M3 17l6-6 4 4 8-8M14 7h7v7', 'Progress you can see, pricing you can trust', 'A short report after every lesson. From R280/hour with no signup fees or contracts.']
     ].map(w => `<div class="card feature-card reveal"><div class="fc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${w[0]}"/></svg></div><h3>${w[1]}</h3><p>${w[2]}</p></div>`).join('')}
   </div>
 </div></section>
@@ -404,31 +475,22 @@ ${statsBlock}
   </div>
   <div style="text-align:center;margin-top:44px" class="reveal"><button class="btn btn-primary btn-lg" onclick="openBooking()">Start with a trial lesson</button></div>
 </div></section>
-<section class="section gray-band" aria-labelledby="stories-h"><div class="container">
-  <div class="section-head center reveal"><span class="eyebrow">Success stories</span><h2 id="stories-h">Real students. Real results.</h2></div>
-  <div class="carousel reveal">
-    <button class="car-btn prev" aria-label="Previous story" onclick="moveSlide(-1)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M15 5l-7 7 7 7"/></svg></button>
-    <div class="slides"><div class="slide-track" id="slideTrack">
-      ${STORIES.map(s => `<div class="slide">
-        <div class="slide-visual">
-          <div class="big-av" style="background:linear-gradient(135deg,${s.c},${s.c}BB)">${s.ini}</div>
-          <div class="lift"><span class="from">${s.from}</span>${ARROW.replace('viewBox', 'width="15" height="15" viewBox')}<span class="to">${s.to}</span></div>
-          <span class="chip" style="background:#fff;border:1px solid var(--line)">${s.subj}</span>
-        </div>
-        <div class="slide-body"><blockquote>${s.quote}</blockquote><div class="slide-who"><b>${s.name}</b> · ${s.who}</div></div>
-      </div>`).join('')}
-    </div></div>
-    <button class="car-btn next" aria-label="Next story" onclick="moveSlide(1)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 5l7 7-7 7"/></svg></button>
-    <div class="car-nav">${STORIES.map((_, i) => `<button class="car-dot${i === 0 ? ' on' : ''}" aria-label="Story ${i + 1}" onclick="goSlide(${i})"></button>`).join('')}</div>
-  </div>
+<section class="section" aria-labelledby="meet-h"><div class="container">
+  <div class="section-head center reveal"><span class="eyebrow">Meet your tutors</span><h2 id="meet-h">Real people who love what they teach</h2>
+  <p class="lead" style="margin:10px auto 0">A few of the tutors we match families with.</p></div>
+  <div class="meet-grid">${TUTORS.slice(0, 4).map(t => `<div class="card meet-card reveal">
+    <div class="mt-face" style="background:linear-gradient(135deg,${t.c},${t.c}CC)">${tutorFace(t)}</div>
+    <h3>${t.name}</h3><div class="uni">${t.deg} · ${t.uni.replace('University of the Witwatersrand', 'Wits').replace('University of ', '').replace(' University', '')}</div>
+    ${t.quote ? `<blockquote>“${t.quote}”</blockquote>` : `<div class="tutor-tags" style="justify-content:center">${t.subs.map(x => `<span class="chip">${x}</span>`).join('')}</div>`}
+    <div class="mt-mode">${CAPE_UNIS.test(t.uni) ? 'In person in Cape Town &amp; online' : 'Online lessons'}</div>
+  </div>`).join('')}</div>
+  <div style="text-align:center;margin-top:30px" class="reveal"><a class="btn btn-ghost" href="/tutors/">Meet more tutors</a></div>
 </div></section>
 ${reviewsBlock()}
-${magnetBlock}
 <section class="section" aria-labelledby="faq-h"><div class="container">
   <div class="section-head center reveal"><span class="eyebrow">FAQ</span><h2 id="faq-h">Questions Cape Town parents ask us</h2></div>
   <div class="faq reveal">${FAQS.map(f => `<details class="faq-item"><summary>${f.q}<span class="pm">+</span></summary><div class="faq-a">${f.a}</div></details>`).join('')}</div>
 </div></section>
-${callbackBlock()}
 ${ctaBlock()}`;
   write('index.html', layout({
     title: 'Private Tutors Cape Town | Maths, Science & More — Whiz Tutoring',
@@ -498,7 +560,7 @@ write('subjects/index.html', layout({
   body: `
 ${pageHero('Subjects', 'Every subject, taught properly', 'CAPS, IEB, Cambridge (IGCSE, AS & A-Level), IB and first-year university — in person across Cape Town or online anywhere.', '<a href="/">Home</a> / <span>Subjects</span>')}
 <section class="section tight"><div class="container">
-  <div class="grid g3">${SUBJECT_CARDS.map(s => `<a class="card subject-card" href="${s.link}"><div class="icon" style="background:${s.bg}">${s.icon}</div><h3>${s.name}</h3><p>${s.desc}</p><span class="go">View tutoring ${ARROW}</span></a>`).join('')}</div>
+  <div class="grid g3">${SUBJECT_CARDS.map(s => `<a class="card subject-card" href="${s.link}"><div class="icon" style="background:${s.bg}">${subjIcon(s.name, s.icon)}</div><h3>${s.name}</h3><p>${s.desc}</p><span class="go">View tutoring ${ARROW}</span></a>`).join('')}</div>
   <div class="section-head" style="margin:72px 0 22px"><span class="eyebrow">Popular searches</span><h2 style="font-size:26px">Dedicated tutoring pages</h2></div>
   <div class="seo-links">${SUBJECT_PAGES.map(p => `<a href="/${p.slug}/">${p.kw}</a>`).join('')}</div>
 </div></section>
@@ -587,7 +649,7 @@ write('tutors/index.html', layout({
 ${pageHero('Our tutors', 'Carefully screened. Genuinely brilliant.', 'Top students and graduates from UCT, Stellenbosch, Wits, UP and UJ. Subject-tested, interview-vetted and background-checked before they meet a single student.', '<a href="/">Home</a> / <span>Tutors</span>')}
 <section class="section tight"><div class="container">
   <div class="grid g3">${TUTORS.map(t => `<div class="card tutor-card">
-    <div class="tutor-top"><div class="tutor-photo" style="background:linear-gradient(135deg,${t.c},${t.c}CC)">${t.ini}</div>
+    <div class="tutor-top"><div class="tutor-photo" style="background:linear-gradient(135deg,${t.c},${t.c}CC)">${tutorFace(t)}</div>
     <div><h3>${t.name}</h3><div class="uni">${t.uni}</div><div class="deg">${t.deg}</div></div></div>
     <div class="tutor-body">
       <div class="tutor-meta"><span><b>${t.yrs} yrs</b> tutoring</span><span><b>${t.lessons}+</b> lessons</span><span class="stars">★ 4.9</span></div>
@@ -711,18 +773,18 @@ ${ctaBlock()}`;
 // ============ CONTACT ============
 write('contact/index.html', layout({
   title: 'Contact Whiz Tutoring | Book a Tutor in Cape Town',
-  desc: 'Contact Whiz Tutoring: send a tutor enquiry, WhatsApp +27 60 000 0000, or email whiztutors@gmail.com. We match Cape Town families with tutors within 24 hours.',
+  desc: 'Contact Whiz Tutoring: send a tutor enquiry, WhatsApp ${waDisplay}, or email whiztutors@gmail.com. We match Cape Town families with tutors within 24 hours.',
   canonical: '/contact/',
   schemas: [breadcrumb([['Home', '/'], ['Contact', '/contact/']]), faqSchema],
   body: `
 ${pageHero('Contact', 'Let\u2019s find your perfect tutor', 'Send an enquiry and we\u2019ll match you within 24 hours — or reach us directly on WhatsApp, email or phone.', '<a href="/">Home</a> / <span>Contact</span>')}
 <section class="section tight"><div class="container">
   <div class="grid g3" style="margin-bottom:56px">
-    <div class="card feature-card"><div class="fc-ic" style="background:#E9FBF3;color:#25D366">${WA_SVG.replace('viewBox', 'width="23" height="23" viewBox')}</div><h3>WhatsApp</h3><p>Fastest response, 8am–8pm daily.<br><a href="https://wa.me/${SITE.whatsapp}" target="_blank" rel="noopener" style="color:var(--blue);font-weight:600">+27 60 000 0000</a></p></div>
+    <div class="card feature-card"><div class="fc-ic" style="background:#E9FBF3;color:#25D366">${WA_SVG.replace('viewBox', 'width="23" height="23" viewBox')}</div><h3>WhatsApp</h3><p>Fastest response, 8am–8pm daily.<br><a href="https://wa.me/${SITE.whatsapp}" target="_blank" rel="noopener" style="color:var(--blue);font-weight:600">${waDisplay}</a></p></div>
     <div class="card feature-card"><div class="fc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></div><h3>Email</h3><p>We reply within one business day.<br><a href="mailto:${SITE.email}" style="color:var(--blue);font-weight:600">${SITE.email}</a></p></div>
     <div class="card feature-card"><div class="fc-ic" style="background:var(--gold-tint);color:#B87A00"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.4 2.1L8.1 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.9.6 2.9.7a2 2 0 0 1 1.6 2z"/></svg></div><h3>Phone</h3><p>Mon–Fri, 9am–5pm.<br><a href="tel:${SITE.phone.replace(/\s/g, '')}" style="color:var(--blue);font-weight:600">${SITE.phone}</a></p></div>
   </div>
-  <div class="section-head center"><h2 style="font-size:28px">Send a full enquiry</h2><p class="lead" style="margin:10px auto 0">Every field helps us match better. Required fields are marked *.</p></div>
+  <div class="section-head center"><h2 style="font-size:28px">Send a full enquiry</h2><p class="lead" style="margin:10px auto 0">It takes about a minute: subject, grade, and how to reach you.</p></div>
   <div style="text-align:center;margin-top:26px"><button class="btn btn-primary btn-lg" onclick="openBooking()">Open the enquiry form</button></div>
 </div></section>
 ${callbackBlock()}
@@ -768,6 +830,30 @@ ${pageHero('Become a tutor', 'Earn well doing work that matters', 'Join 300+ tut
       <div class="form-success" style="display:none;text-align:center;padding:20px 0"><h3 style="font-size:20px">Application sent! ✓</h3><p style="color:var(--slate)">We review applications every Friday and email shortlisted candidates.</p></div>
     </form>
   </div>
+</div></section>` }));
+
+// ============ PRIVACY (POPIA) ============
+// Plain-language starting point. Have it checked before relying on it.
+write('privacy/index.html', layout({
+  title: 'Privacy Policy | Whiz Tutoring',
+  desc: 'How Whiz Tutoring collects, uses and protects your personal information under POPIA.',
+  canonical: '/privacy/',
+  body: `
+${pageHero('Legal', 'Privacy Policy', 'How we handle the information you share with us, in line with the Protection of Personal Information Act (POPIA).', '<a href="/">Home</a> / <span>Privacy</span>')}
+<section class="section tight"><div class="container prose" style="max-width:760px">
+  <h2>What we collect</h2>
+  <p>When you send an enquiry, request a call back or subscribe, we collect what you give us: your name, phone or WhatsApp number, email address, and details about the learner such as grade, subject, school, area and preferred lesson times.</p>
+  <h2>Why we collect it</h2>
+  <p>Only to respond to your enquiry, match you with a suitable tutor, arrange and manage lessons, send lesson reports and, if you subscribed, send study tips. We do not sell or rent your information.</p>
+  <h2>Who sees it</h2>
+  <p>Our coordinators, and the tutor we match you with (who receives only what they need to teach). We use trusted service providers to run the website and send email; they process data on our behalf.</p>
+  <h2>Children's information</h2>
+  <p>Where a learner is under 18, we ask that a parent or guardian makes the enquiry or consents to it.</p>
+  <h2>How long we keep it</h2>
+  <p>Enquiries that don't lead to lessons are deleted within 12 months. Records of active learners are kept while lessons continue and for a reasonable period afterwards for accounting purposes.</p>
+  <h2>Your rights</h2>
+  <p>You can ask to see, correct or delete your information, or unsubscribe at any time, by emailing <a href="mailto:${SITE.email}">${SITE.email}</a> or WhatsApping <a href="https://wa.me/${SITE.whatsapp}">${waDisplay}</a>. You may also lodge a complaint with the Information Regulator of South Africa.</p>
+  <p style="color:var(--mist);font-size:14px;margin-top:30px">Responsible party: Whiz Tutoring (Pty) Ltd, Cape Town.</p>
 </div></section>` }));
 
 // ============ SITEMAP + ROBOTS + REDIRECTS ============

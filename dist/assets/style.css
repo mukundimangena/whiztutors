@@ -58,10 +58,10 @@ h3{font-size:22px;font-weight:700}
 .nav{position:fixed;top:0;left:0;right:0;z-index:90;background:rgba(255,255,255,.85);backdrop-filter:blur(14px);
   border-bottom:1px solid transparent;transition:border-color .25s,box-shadow .25s}
 .nav.scrolled{border-color:var(--line);box-shadow:var(--shadow-sm)}
-.nav-inner{display:flex;align-items:center;gap:32px;height:76px}
-.logo{display:flex;align-items:center;gap:10px;font:800 21px var(--font-display);letter-spacing:-.02em}
-.logo-mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--blue),#2E7BFF);
-  display:grid;place-items:center;color:#fff;font-size:19px;box-shadow:0 6px 14px -4px rgba(11,95,255,.5)}
+.nav-inner{display:flex;align-items:center;gap:32px;height:84px}
+.logo{display:flex;align-items:center;gap:12px;font:800 29px var(--font-display);letter-spacing:-.03em;white-space:nowrap}
+.logo-mark{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--blue),#2E7BFF);
+  display:grid;place-items:center;color:#fff;font-size:25px;box-shadow:0 6px 14px -4px rgba(11,95,255,.5)}
 .logo em{font-style:normal;color:var(--blue)}
 .nav-links{display:flex;gap:4px;margin-left:auto;list-style:none}
 .nav-links a{font:500 15px var(--font-body);color:var(--slate);padding:9px 13px;border-radius:9px;transition:.15s}
@@ -69,7 +69,7 @@ h3{font-size:22px;font-weight:700}
 .nav-cta{display:flex;gap:10px;align-items:center}
 .hamburger{display:none;background:none;border:none;width:44px;height:44px;border-radius:10px}
 .hamburger span{display:block;width:22px;height:2px;background:var(--ink);margin:5px auto;border-radius:2px;transition:.25s}
-.mobile-menu{display:none;position:fixed;inset:76px 0 0 0;background:#fff;z-index:89;padding:28px 24px;overflow:auto}
+.mobile-menu{display:none;position:fixed;inset:84px 0 0 0;background:#fff;z-index:89;padding:28px 24px;overflow:auto}
 .mobile-menu.open{display:block}
 .mobile-menu a{display:block;font:600 19px var(--font-display);padding:15px 6px;border-bottom:1px solid var(--line);color:var(--ink)}
 .mobile-menu .btn{margin-top:22px;width:100%}
@@ -93,9 +93,9 @@ h3{font-size:22px;font-weight:700}
 .stars{color:var(--gold);letter-spacing:1px}
 
 /* Hero visual: lesson card stack */
-.hero-visual{position:relative;min-height:480px}
+.hero-visual{position:relative;min-height:560px}
 .lesson-card{position:absolute;background:#fff;border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-lg)}
-.lc-main{top:36px;left:8%;right:6%;padding:26px;animation:float 7s ease-in-out infinite}
+.lc-main{top:92px;left:8%;right:6%;padding:26px;animation:float 7s ease-in-out infinite}
 .lc-head{display:flex;align-items:center;gap:14px;margin-bottom:18px}
 .lc-avatar{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;color:#fff;font:800 19px var(--font-display)}
 .lc-name{font:700 16.5px var(--font-display)}
@@ -107,7 +107,7 @@ h3{font-size:22px;font-weight:700}
 .lc-board .step b{color:var(--teal)}
 .lc-tags{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
 .chip{font:600 12.5px var(--font-body);padding:6px 13px;border-radius:999px;background:var(--blue-tint);color:var(--blue)}
-.lc-grade{bottom:52px;left:-4px;padding:18px 22px;display:flex;gap:14px;align-items:center;animation:float 6s ease-in-out .8s infinite}
+.lc-grade{bottom:0;left:-4px;padding:18px 22px;display:flex;gap:14px;align-items:center;animation:float 6s ease-in-out .8s infinite}
 .grade-ring{width:58px;height:58px;position:relative}
 .grade-ring svg{transform:rotate(-90deg)}
 .grade-ring .track{stroke:var(--line)}
@@ -117,7 +117,7 @@ h3{font-size:22px;font-weight:700}
 .lc-grade .txt b{font:800 16px var(--font-display);display:block}
 .lc-grade .txt span{font-size:13px;color:var(--mist)}
 .lc-grade .txt .up{color:var(--teal);font-weight:700}
-.lc-next{top:-6px;right:-2px;padding:15px 19px;display:flex;gap:12px;align-items:center;animation:float 8s ease-in-out 1.6s infinite}
+.lc-next{top:0;right:-2px;z-index:2;padding:15px 19px;display:flex;gap:12px;align-items:center;animation:float 8s ease-in-out 1.6s infinite}
 .lc-next .cal{width:44px;height:44px;border-radius:12px;background:var(--gold-tint);display:grid;place-items:center;font-size:20px}
 .lc-next b{font:700 14.5px var(--font-display);display:block}
 .lc-next span{font-size:12.5px;color:var(--mist)}
@@ -136,7 +136,8 @@ h3{font-size:22px;font-weight:700}
   padding:58px 48px;display:grid;grid-template-columns:repeat(4,1fr);gap:32px;color:#fff;position:relative;overflow:hidden}
 .stats::after{content:"";position:absolute;top:-90px;right:-60px;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,.07)}
 .stat b{font:800 clamp(34px,3.4vw,46px)/1.1 var(--font-display);display:block}
-.stat b em{font-style:normal;color:var(--gold)}
+.stat b em{font-style:normal;color:var(--gold);font-size:.7em;margin-left:2px}
+.stat b span{font-size:inherit;opacity:1}
 .stat span{font-size:15px;opacity:.85}
 
 /* ===== Cards / grids ===== */
@@ -362,11 +363,12 @@ footer{background:#10141B;color:#B9C1CD;padding:70px 0 34px;margin-top:96px}
 .toast svg{width:18px;height:18px;color:var(--teal)}
 
 /* Reveal on scroll */
-.reveal{opacity:0;transform:translateY(26px);transition:opacity .6s ease,transform .6s ease}
+/* content is visible by default; only hidden for the fade-in once JS has loaded */
+.js .reveal{opacity:0;transform:translateY(26px);transition:opacity .6s ease,transform .6s ease}
 .reveal.in{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
-  .reveal{opacity:1;transform:none}
+  .js .reveal{opacity:1;transform:none}
 }
 
 /* ===== Responsive ===== */
@@ -394,7 +396,7 @@ footer{background:#10141B;color:#B9C1CD;padding:70px 0 34px;margin-top:96px}
   .stats{grid-template-columns:1fr 1fr;gap:24px}
   .form-grid,.opt-grid,.radio-cards,.value-list{grid-template-columns:1fr}
   .hero{padding:130px 0 60px}
-  .hero-visual{min-height:430px}
+  .hero-visual{min-height:520px}
   .lc-main{left:0;right:0}
   .lc-grade{left:4px}
   .lc-next{right:0}
@@ -470,3 +472,129 @@ footer{background:#10141B;color:#B9C1CD;padding:70px 0 34px;margin-top:96px}
 .spin{width:16px;height:16px;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 img{height:auto}
+
+/* ===== Compact subject list (home) ===== */
+.subject-list{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.subject-list a{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1.5px solid var(--line);border-radius:14px;background:#fff;transition:.15s}
+.subject-list a:hover{border-color:var(--blue)}
+.subject-list a:hover>svg{transform:translateX(3px);color:var(--blue)}
+.sl-ic{flex:none;width:40px;height:40px;border-radius:11px;display:grid;place-items:center;font-size:19px}
+.sl-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.sl-txt b{font:700 15.5px var(--font-display)}
+.sl-txt small{font-size:13px;color:var(--slate);line-height:1.4}
+.subject-list a>svg{flex:none;width:16px;height:16px;color:#AEB6C2;transition:.15s}
+@media (max-width:1024px){.subject-list{grid-template-columns:1fr 1fr}}
+@media (max-width:720px){
+  .subject-list{grid-template-columns:1fr}
+  .sl-txt small{display:none}
+  .logo{font-size:23px;gap:9px}
+  .logo-mark{width:40px;height:40px;font-size:21px}
+}
+/* Larger logo needs more room — collapse nav links to the hamburger sooner */
+@media (max-width:1180px){
+  .nav-links,.nav-cta .btn-ghost{display:none}
+  .hamburger{display:block}
+  .nav-cta{margin-left:auto}
+}
+
+/* ===== Booking wizard ===== */
+.wizard fieldset{border:0;padding:0;margin:0;min-width:0}
+.wizard legend{font:700 19px var(--font-display);margin-bottom:16px;padding:0}
+.wz-progress{height:6px;border-radius:999px;background:var(--line);overflow:hidden;margin-bottom:14px}
+.wz-progress span{display:block;height:100%;width:20%;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:inherit;transition:width .3s ease}
+.wz-crumbs{display:flex;flex-wrap:wrap;gap:6px;min-height:0;margin-bottom:14px}
+.wz-crumbs:empty{display:none}
+.wz-tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.wz-tile{position:relative;display:flex;align-items:center;gap:11px;border:1.5px solid var(--line);border-radius:14px;padding:13px 14px;cursor:pointer;font:600 14.5px var(--font-body);transition:.15s;background:#fff}
+.wz-tile:hover{border-color:var(--blue)}
+.wz-tile input,.wz-chips input{position:absolute;opacity:0;pointer-events:none}
+.wz-tile:has(input:checked){border-color:var(--blue);background:var(--blue-tint)}
+.wz-tile:has(input:focus-visible),.wz-chips label:has(input:focus-visible) span{outline:2px solid var(--blue);outline-offset:2px}
+.wz-ic{flex:none;width:34px;height:34px;border-radius:10px;background:var(--blue-tint);display:grid;place-items:center;font-size:17px}
+.wz-tile-text span,.wz-tile-big span:last-child{display:flex;flex-direction:column;gap:2px}
+.wz-tile small{font:400 12.5px var(--font-body);color:var(--slate)}
+.wz-two{grid-template-columns:1fr 1fr}
+.wz-tile-big{flex-direction:column;align-items:flex-start;padding:20px 18px;gap:12px}
+.wz-tile-big .wz-ic{width:46px;height:46px;font-size:23px}
+.wz-tile-big b{font-size:17px}
+.wz-group{font:600 12.5px var(--font-body);text-transform:uppercase;letter-spacing:.06em;color:var(--mist);margin:14px 0 8px}
+.wz-chips{display:flex;flex-wrap:wrap;gap:8px}
+.wz-chips label{position:relative;cursor:pointer}
+.wz-chips span{display:block;border:1.5px solid var(--line);border-radius:999px;padding:8px 15px;font:600 14px var(--font-body);transition:.15s}
+.wz-chips label:hover span{border-color:var(--blue)}
+.wz-chips input:checked+span{border-color:var(--blue);background:var(--blue);color:#fff}
+.wz-nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:22px}
+.wz-nav #wzNext,.wz-nav #wzSubmit{margin-left:auto}
+.wz-nav:not(:has(:not([hidden]))){display:none}
+@media (max-width:480px){.wz-tiles,.wz-two{grid-template-columns:1fr}}
+
+/* ===== Hero quick-start ===== */
+.quick-start{margin-top:26px}
+.quick-start p{font:600 14px var(--font-body);color:var(--slate);margin-bottom:10px}
+.quick-start div{display:flex;flex-wrap:wrap;gap:8px}
+.quick-start button{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px;font:600 14px var(--font-body);cursor:pointer;transition:.15s}
+.quick-start button:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-tint)}
+
+/* ===== Photos (shown when real photos exist in src/img) ===== */
+.tutor-photo img,.mt-face img{width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block}
+.hero-photo{position:absolute;inset:0 40px 30px 0;border-radius:28px;overflow:hidden;box-shadow:var(--shadow-lg)}
+.hero-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.hero-visual.has-photo .lc-main{display:none}
+
+/* ===== Meet the tutors (home) ===== */
+.meet-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.meet-card{text-align:center;padding:26px 18px}
+.mt-face{width:96px;height:96px;border-radius:50%;margin:0 auto 14px;display:grid;place-items:center;color:#fff;font:700 28px var(--font-display);box-shadow:0 0 0 5px #fff,0 0 0 6px var(--line)}
+.meet-card h3{font-size:17px}
+.meet-card .uni{font-size:13.5px;color:var(--slate);margin:3px 0 10px}
+.meet-card blockquote{font-size:14px;color:var(--ink);font-style:italic;line-height:1.5}
+@media (max-width:1024px){.meet-grid{grid-template-columns:1fr 1fr}}
+@media (max-width:480px){.meet-grid{grid-template-columns:1fr}}
+.wizard [hidden]{display:none!important}
+.nav-cta .btn{white-space:nowrap}
+/* "Become a Tutor" is also in the hero, footer and mobile menu — drop it from the bar when space is tight */
+@media (max-width:1440px){.nav-cta .btn-ghost{display:none}}
+
+/* ---------- conversion & polish fixes (Oct 2026) ---------- */
+/* line icons in place of emoji */
+.sl-ic svg,.subject-card .icon svg{width:21px;height:21px;color:var(--blue)}
+.wz-ic svg{width:18px;height:18px;color:var(--blue)}
+.wz-tile-big .wz-ic svg{width:24px;height:24px}
+.lc-next .cal svg{width:22px;height:22px;color:#B87A00}
+
+/* hero: WhatsApp as the second action, price + guarantee under the buttons */
+.btn-wa{display:inline-flex;align-items:center;gap:9px}
+.btn-wa svg{color:#25D366}
+.hero-reassure{display:flex;align-items:flex-start;gap:8px;margin-top:16px;font-size:14.5px;color:var(--slate);max-width:520px}
+.hero-reassure svg{flex:none;width:18px;height:18px;color:var(--teal);margin-top:2px}
+.hero-reassure b{color:var(--ink)}
+
+/* trust strip */
+.trust-points{list-style:none;display:flex;flex-wrap:wrap;justify-content:center;gap:10px 28px;margin:22px 0 0;padding:0}
+.trust-points li{display:flex;align-items:center;gap:7px;font:500 14.5px var(--font-body);color:var(--slate)}
+.trust-points svg{width:17px;height:17px;color:var(--teal)}
+
+/* tutor cards: say whether in-person is possible */
+.mt-mode{margin-top:12px;font-size:12.5px;color:var(--mist)}
+
+/* shorter booking form */
+.wz-hint{color:var(--slate);font-size:14.5px;margin:-4px 0 16px}
+.field label small{font-weight:400;color:var(--mist)}
+.wz-more{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}
+.wz-more summary{cursor:pointer;font:600 14.5px var(--font-body);color:var(--blue);list-style:none}
+.wz-more summary::-webkit-details-marker{display:none}
+.wz-more summary::before{content:"+ "}
+.wz-more[open] summary::before{content:"− "}
+.wz-more .form-grid{margin-top:14px}
+
+/* privacy page */
+.prose h2{font-size:22px;margin:30px 0 8px}
+.prose p{color:var(--slate);line-height:1.7}
+.prose a{color:var(--blue)}
+
+/* phones: one WhatsApp button (the sticky bar), and keep the footer clear of the bar */
+@media (max-width:720px){
+  .wa-float{display:none}
+  body{padding-bottom:76px}
+  .hero-ctas .btn{flex:1 1 100%}
+}

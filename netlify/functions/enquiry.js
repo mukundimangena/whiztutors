@@ -9,8 +9,7 @@
 //   TURNSTILE_SECRET    – optional, Cloudflare Turnstile secret for CAPTCHA verification
 
 const RATE = new Map(); // per-IP soft rate limit (per warm instance)
-const RESEND_API_KEY="re_Sb8HwQ2T_MbVtrN63u1qAnWycBPVpSxKw"
-const NOTIFY_EMAIL="whiztutors@gmail.com"
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
 
 exports.handler = async (event) => {
   const headers = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' };
@@ -44,8 +43,9 @@ exports.handler = async (event) => {
   const clean = {}; const strip = s => String(s || '').replace(/[<>]/g, '').trim().slice(0, 1000);
   for (const [k, v] of Object.entries(data)) clean[k] = strip(v);
   if (type === 'booking') {
-    if (!clean.student || !clean.email || !clean.phone) return { statusCode: 400, headers, body: JSON.stringify({ error: 'Missing required fields' }) };
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(clean.email)) return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid email' }) };
+    // Name + phone are enough to start; email is optional (used for the confirmation only)
+    if (!clean.student || !clean.phone) return { statusCode: 400, headers, body: JSON.stringify({ error: 'Missing required fields' }) };
+    if (clean.email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(clean.email)) return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid email' }) };
   }
 
   // ---------- Compose emails ----------

@@ -15,7 +15,8 @@ burger && burger.addEventListener('click',function(){
 });
 
 /* ---- Reveal on scroll ---- */
-const ro = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){e.target.classList.add('in');ro.unobserve(e.target);} }),{threshold:.12});
+if(!('IntersectionObserver' in window)) $$('.reveal').forEach(el=>el.classList.add('in'));
+const ro = !('IntersectionObserver' in window) ? {observe(){}} : new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){e.target.classList.add('in');ro.unobserve(e.target);} }),{threshold:.12});
 $$('.reveal').forEach(el=>ro.observe(el));
 
 /* ---- Highlighter + grade ring ---- */
@@ -23,12 +24,14 @@ setTimeout(()=>{ $$('.hl').forEach(h=>h.classList.add('draw')); const g=$('#grad
 
 /* ---- Animated counters ---- */
 const band = $('#statsBand');
-if(band){
+if(band && 'IntersectionObserver' in window){
+  // numbers are real in the HTML (for Google & no-JS); only reset to 0 if the band is still off-screen
+  if(band.getBoundingClientRect().top > innerHeight) $$('.count',band).forEach(el=>el.textContent='0');
   new IntersectionObserver((es,obs)=>es.forEach(e=>{ if(e.isIntersecting){obs.disconnect();
     $$('.count',band).forEach(el=>{
       const to=+el.dataset.to, t0=performance.now();
       (function tick(t){ const p=Math.min((t-t0)/1600,1), ease=1-Math.pow(1-p,3);
-        el.textContent=Math.round(to*ease).toLocaleString(); if(p<1)requestAnimationFrame(tick); })(t0);
+        el.textContent=Math.round(to*ease).toLocaleString('en-ZA'); if(p<1)requestAnimationFrame(tick); })(t0);
     });
   }}),{threshold:.4}).observe(band);
 }
@@ -48,12 +51,73 @@ let toastTimer;
 window.toast = msg=>{ const t=$('#toast'); if(!t)return; $('#toastMsg').textContent=msg;
   t.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),4200); };
 
-/* ---- Booking modal ---- */
+/* ---- Booking modal: step-by-step wizard ---- */
+// subject → curriculum & grade → online / in person → area (in person only) → contact details
+const wzForm = $('#bookModal form.wizard');
+const WZ_ALIASES = {'Programming':'Programming / IT','Biology':'Life Sciences / Biology','Chemistry':'Physical Sciences',
+  'Statistics':'Mathematics','Engineering':'Engineering (university)','Mathematics · Matric':'Mathematics','History':'Multiple / other'};
+let wzPath = [], wzAt = 0;
+function wzSteps(){
+  const inPerson = wzForm.lesson_type.value === 'In person';
+  return ['subject','curriculum','mode'].concat(inPerson ? ['area'] : [], ['details']);
+}
+function wzShow(i, focus=true){
+  wzPath = wzSteps(); wzAt = Math.max(0, Math.min(i, wzPath.length-1));
+  const name = wzPath[wzAt];
+  $$('.wz-step',wzForm).forEach(f=>f.hidden = f.dataset.step!==name);
+  $('#wzBar').style.width = ((wzAt+1)/wzPath.length*100)+'%';
+  $('#wzBack').hidden = wzAt===0;
+  $('#wzNext').hidden = !['curriculum','area'].includes(name);
+  $('#wzSubmit').hidden = name!=='details';
+  $('.form-note',wzForm).hidden = name!=='details';
+  const f = wzForm, area = f.area.value==='Other Cape Town' ? (f.area_other.value||'Cape Town') : f.area.value;
+  const picks = [f.subject.value, f.curriculum.value, f.grade.value, f.lesson_type.value, f.lesson_type.value==='In person' ? area : ''].filter(Boolean);
+  $('#wzCrumbs').innerHTML = picks.map(p=>'<span class="chip">'+p.replace(/[<>&]/g,'')+'</span>').join('');
+  const step = $('.wz-step:not([hidden])',wzForm), first = step && step.querySelector('input:checked,input,select');
+  focus && first && setTimeout(()=>first.focus({preventScroll:true}),60);
+}
+function wzStepOk(){
+  const name = wzPath[wzAt], f = wzForm;
+  if(name==='curriculum'){
+    if(!f.curriculum.value){ toast('Please pick a curriculum (or “Not sure”).'); return false; }
+    if(!f.grade.value){ setErr(f.grade,'Please choose a grade.'); return false; }
+  }
+  if(name==='area'){
+    if(!f.area.value){ toast('Please pick an area.'); return false; }
+    if(f.area.value==='Other Cape Town' && !f.area_other.value.trim()){ f.area_other.focus(); toast('Which suburb are you in?'); return false; }
+  }
+  return true;
+}
+if(wzForm){
+  // picking a tile moves straight on; curriculum and area wait for "Continue" (they have extra inputs)
+  wzForm.addEventListener('change',e=>{
+    const n = e.target.name;
+    if(n==='area') $('#wzOtherArea').hidden = e.target.value!=='Other Cape Town';
+    if(n==='lesson_type' && e.target.value==='Online') $$('input[name="area"]',wzForm).forEach(r=>r.checked=false);
+    if(n==='subject' || n==='lesson_type') setTimeout(()=>wzShow(wzAt+1),180);
+    else wzShow(wzAt,false);
+  });
+  $('#wzNext').addEventListener('click',()=>{ if(wzStepOk()) wzShow(wzAt+1); });
+  $('#wzBack').addEventListener('click',()=>wzShow(wzAt-1));
+  wzForm.addEventListener('keydown',e=>{ if(e.key==='Enter' && e.target.tagName!=='TEXTAREA' && wzPath[wzAt]!=='details'){ e.preventDefault(); $('#wzNext').hidden || $('#wzNext').click(); } });
+}
+
 window.openBooking = (subject)=>{
   const m=$('#bookModal'); if(!m)return;
   m.classList.add('open'); document.body.style.overflow='hidden';
-  if(subject){ const sel=$('#f_subject'); if(sel){ [...sel.options].forEach(o=>{ if(o.text===subject) sel.value=o.value; }); } }
-  setTimeout(()=>$('#f_student') && $('#f_student').focus(),100);
+  if(!wzForm) return;
+  // fresh start each time (also clears a previous success message)
+  wzForm.reset(); $('#wzOtherArea').hidden = true;
+  const ok = wzForm.querySelector('.form-success'); if(ok) ok.style.display='none';
+  $$('.wz-step,.wz-nav,.wz-progress,.wz-crumbs,.form-grid,.btn,.form-note',wzForm).forEach(el=>el.style.display='');
+  let start = 0;
+  if(subject){
+    const want = WZ_ALIASES[subject] || subject;
+    const tile = [...wzForm.querySelectorAll('input[name="subject"]')].find(r=>r.value===want);
+    if(tile){ tile.checked = true; start = 1; }
+    if(/cambridge|igcse|a-level/i.test(subject)){ const c = wzForm.querySelector('input[name="curriculum"][value="Cambridge"]'); if(c) c.checked = true; }
+  }
+  wzShow(start);
 };
 window.closeBooking = ()=>{ const m=$('#bookModal'); if(!m)return; m.classList.remove('open'); document.body.style.overflow=''; };
 const bm=$('#bookModal');
@@ -96,7 +160,7 @@ async function submitLead(form,btn,type){
   try{
     const res = await fetch(API.enquiry,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
     if(!res.ok) throw new Error('bad status');
-    form.reset(); closeBooking();
+    form.reset();
     showSuccess(form);
   }catch(err){
     // Graceful fallback (e.g. previewing without backend): open a prefilled email instead
@@ -109,7 +173,7 @@ async function submitLead(form,btn,type){
 }
 function showSuccess(form){
   const ok = form.querySelector('.form-success');
-  if(ok){ ok.style.display='block'; form.querySelectorAll('.form-grid,.btn,.form-note').forEach(el=>el.style.display='none'); }
+  if(ok){ ok.style.display='block'; form.querySelectorAll('.form-grid,.btn,.form-note,.wz-step,.wz-nav,.wz-progress,.wz-crumbs').forEach(el=>el.style.display='none'); }
   toast("Thank you! We'll contact you within 24 hours to match you with the perfect tutor.");
 }
 window.submitLead = submitLead;

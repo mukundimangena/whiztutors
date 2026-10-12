@@ -2,7 +2,7 @@
 // node build.js  →  writes the full site into dist/
 const fs = require('fs');
 const path = require('path');
-const { SITE, SUBJECT_PAGES, SUBURBS, POSTS, TUTORS, STORIES, SEED_REVIEWS, FAQS, SUBJECT_CARDS } = require('./src/data');
+const { UNIVERSITIES, SITE, SUBJECT_PAGES, SUBURBS, POSTS, TUTORS, STORIES, SEED_REVIEWS, FAQS, SUBJECT_CARDS } = require('./src/data');
 
 const DIST = path.join(__dirname, 'dist');
 fs.rmSync(DIST, { recursive: true, force: true });
@@ -16,6 +16,7 @@ fs.copyFileSync('src/main.js', path.join(DIST, 'assets/main.js'));
 const ASSET_V = require('crypto').createHash('md5').update(css + fs.readFileSync('src/main.js', 'utf8')).digest('hex').slice(0, 8);
 // Real photos: drop files into src/img/ (see src/img/README.md). Anything missing falls back to initials/illustration.
 if (fs.existsSync('src/img')) fs.cpSync('src/img', path.join(DIST, 'assets/img'), { recursive: true, filter: f => !f.endsWith('.md') });
+for (const f of ['favicon.ico', 'site.webmanifest']) if (fs.existsSync(`src/img/brand/${f}`)) fs.copyFileSync(`src/img/brand/${f}`, path.join(DIST, f));
 const hasImg = f => !!f && fs.existsSync(path.join('src/img', f));
 const tutorFace = t => hasImg(t.photo) ? `<img src="/assets/img/${t.photo}" alt="${t.name}, Whiz tutor" loading="lazy" width="200" height="200">` : t.ini;
 
@@ -55,6 +56,7 @@ const CAPE_UNIS = /Cape Town|Stellenbosch|Western Cape|Cape Peninsula/;
 // ---------- shared structured data ----------
 const orgSchema = {
   '@context': 'https://schema.org', '@type': ['EducationalOrganization', 'LocalBusiness'],
+  logo: SITE.domain + '/assets/img/brand/logo.png', image: SITE.domain + '/assets/img/brand/og-image.jpg',
   '@id': SITE.domain + '/#organization',
   name: SITE.name, url: SITE.domain, email: SITE.email, telephone: SITE.phone,
   description: 'Premium one-on-one tutoring from South Africa\u2019s top university students and graduates. Online and in person across Cape Town.',
@@ -90,11 +92,20 @@ function layout({ title, desc, canonical, body, schemas = [], ogType = 'website'
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${title}">
 <meta name="twitter:description" content="${desc}">
+<meta property="og:image" content="${SITE.domain}/assets/img/brand/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:image" content="${SITE.domain}/assets/img/brand/og-image.jpg">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/assets/img/brand/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/brand/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#7C3AED">
 <meta name="geo.region" content="ZA-WC">
 <meta name="geo.placename" content="Cape Town">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/style.css?v=${ASSET_V}">
 <script>document.documentElement.classList.add('js')</script>
 ${jsonld(orgSchema)}
@@ -116,7 +127,7 @@ ${chromeHTML()}
 function navHTML() {
   return `<nav class="nav" id="nav" aria-label="Main navigation">
   <div class="container nav-inner">
-    <a href="/" class="logo" aria-label="${SITE.name} home"><span class="logo-mark">W</span>Whiz<em>Tutoring</em></a>
+    <a href="/" class="logo" aria-label="${SITE.name} home"><img src="/assets/img/brand/logo-compact.svg" alt="Whiz Tutors" width="636" height="187"></a>
     <ul class="nav-links">
       <li><a href="/subjects/">Subjects</a></li>
       <li><a href="/areas/">Areas</a></li>
@@ -145,7 +156,7 @@ function footerHTML() {
   <div class="container">
     <div class="foot-grid">
       <div class="foot-brand">
-        <a href="/" class="logo" style="color:#fff"><span class="logo-mark">W</span>Whiz<em>Tutoring</em></a>
+        <a href="/" class="logo logo-foot" aria-label="${SITE.name} home"><img src="/assets/img/brand/logo-on-dark.svg" alt="Whiz Tutors: Learn, Improve, Succeed" width="658" height="231" loading="lazy"></a>
         <p>Premium one-on-one tutoring from South Africa's top university students and graduates. Cape Town & online nationwide.</p>
         <div class="foot-social">
           ${isSet(SITE.facebook) ? `<a href="${SITE.facebook}" target="_blank" rel="noopener" aria-label="Facebook"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.4c0-.9.3-1.6 1.7-1.6h1.5V4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.9H7.8V14h2.7v8h3z"/></svg></a>` : ''}
@@ -304,7 +315,8 @@ const trustStrip = `
   <div class="container">
     <p>Our tutors study at, or graduated from</p>
     <div class="logo-row">
-      <span>UCT</span><span>Stellenbosch</span><span>Wits</span><span>UP</span><span>UJ</span>
+      ${UNIVERSITIES.map(u => { const f = ['svg', 'png', 'webp'].map(x => `logos/${u.file}.${x}`).find(hasImg);
+        return f ? `<img class="uni-logo" src="/assets/img/${f}" alt="${u.name}" title="${u.name}" loading="lazy" height="48">` : `<span title="${u.name}">${u.short}</span>`; }).join('')}
     </div>
     <ul class="trust-points">
       <li>${TICK}Interviewed &amp; subject-tested</li><li>${TICK}Background checked</li><li>${TICK}Free rematch if it\u2019s not the right fit</li>
@@ -420,8 +432,8 @@ const write = (rel, html) => {
       </div>
       <div class="hero-proof">
         <div class="avatar-row" aria-hidden="true">
-          <span class="av" style="background:#0B5FFF">TM</span><span class="av" style="background:#00BFA6">LK</span>
-          <span class="av" style="background:#FFB000;color:#1B1F24">SN</span><span class="av" style="background:#6C4CF1">JP</span>
+          <span class="av" style="background:#4F46E5">TM</span><span class="av" style="background:#7C3AED">LK</span>
+          <span class="av" style="background:#FFB000;color:#0F172A">SN</span><span class="av" style="background:#6C4CF1">JP</span>
         </div>
         <div><span class="stars" aria-label="4.9 out of 5 star Google rating">★★★★★</span><br>${SITE.rating} on Google · ${SITE.reviewCount}+ reviews</div>
       </div>
@@ -430,7 +442,7 @@ const write = (rel, html) => {
       ${hasImg('hero.jpg') ? '<div class="hero-photo"><img src="/assets/img/hero.jpg" alt="" width="900" height="1000" fetchpriority="high"></div>' : ''}
       <div class="lesson-card lc-main">
         <div class="lc-head">
-          <div class="lc-avatar" style="background:linear-gradient(135deg,#0B5FFF,#2E7BFF)">TN</div>
+          <div class="lc-avatar" style="background:linear-gradient(135deg,#4F46E5,#3B82F6)">TN</div>
           <div><div class="lc-name">Thandi N. — UCT</div><div class="lc-sub">Mathematics · Grade 11</div></div>
           <span class="lc-live">● Live lesson</span>
         </div>
@@ -439,7 +451,7 @@ const write = (rel, html) => {
           <div class="step"><b>✓</b> Factorise: (x − 2)(x − 3) = 0</div>
           <div class="step"><b>✓</b> So x = 2 or x = 3 — well done!</div>
         </div>
-        <div class="lc-tags"><span class="chip">Past papers</span><span class="chip" style="background:var(--teal-tint);color:#00806F">Exam technique</span><span class="chip" style="background:var(--gold-tint);color:#9A6A00">Step-by-step</span></div>
+        <div class="lc-tags"><span class="chip">Past papers</span><span class="chip" style="background:var(--teal-tint);color:#6D28D9">Exam technique</span><span class="chip" style="background:var(--gold-tint);color:#9A6A00">Step-by-step</span></div>
       </div>
       <div class="lesson-card lc-grade">
         <div class="grade-ring" id="gradeRing"><svg width="58" height="58" viewBox="0 0 58 58" fill="none"><circle class="track" cx="29" cy="29" r="24" stroke-width="6"/><circle class="fill" cx="29" cy="29" r="24" stroke-width="6"/></svg><b>81%</b></div>

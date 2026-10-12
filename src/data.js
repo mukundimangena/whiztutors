@@ -130,7 +130,7 @@ const SUBURBS = [
 ];
 
 const POSTS = [
-  { slug:'how-to-choose-a-maths-tutor-cape-town', cat:'For parents', icon:'🧭', g:'linear-gradient(135deg,#0B5FFF,#2E7BFF)',
+  { slug:'how-to-choose-a-maths-tutor-cape-town', cat:'For parents', icon:'🧭', g:'linear-gradient(135deg,#4F46E5,#3B82F6)',
     title:'How to Choose a Maths Tutor in Cape Town', kw:'how to choose a maths tutor Cape Town',
     metaDesc:'A parent\u2019s guide to choosing a maths tutor in Cape Town: qualifications to check, questions to ask, red flags, and what a fair hourly rate looks like in 2026.',
     date:'2026-06-14', read:'8 min read',
@@ -146,7 +146,7 @@ const POSTS = [
 <p>In 2026, expect roughly R250–R400 per hour for a vetted university-student tutor, and more for scarce specialists (AP Maths, A-Level Further Maths). Cheaper usually means unvetted; dramatically more expensive rarely means proportionally better.</p>
 <h2>The trial lesson test</h2>
 <p>A good first lesson diagnoses before it teaches: the tutor should find the real gaps (often two grades back) rather than launching into this week\u2019s homework. If your child comes out saying "that actually made sense" — you\u2019ve found your tutor.</p>` },
-  { slug:'top-study-tips-for-matric-students', cat:'Exam prep', icon:'🎯', g:'linear-gradient(135deg,#00BFA6,#34D8C0)',
+  { slug:'top-study-tips-for-matric-students', cat:'Exam prep', icon:'🎯', g:'linear-gradient(135deg,#8B5CF6,#34D8C0)',
     title:'Top Study Tips for Matric Students', kw:'study tips for matric students',
     metaDesc:'Ten evidence-based study tips for matric students: spaced repetition, past-paper strategy, timetabling around the NSC exam schedule, and avoiding burnout.',
     date:'2026-05-28', read:'7 min read',
@@ -234,7 +234,7 @@ const POSTS = [
 <p>Past papers help only if you redo the problems cold days later. Recognising a solution is not the same as producing one.</p>
 <h2>7. Ignoring the verbs</h2>
 <p>"Define", "state", "explain" and "calculate" earn marks differently. Answer what is asked — a beautiful calculation scores zero against a "define" question.</p>` },
-  { slug:'best-study-techniques-university-students', cat:'Study skills', icon:'🎓', g:'linear-gradient(135deg,#0B5FFF,#6C4CF1)',
+  { slug:'best-study-techniques-university-students', cat:'Study skills', icon:'🎓', g:'linear-gradient(135deg,#4F46E5,#6C4CF1)',
     title:'Best Study Techniques for University Students', kw:'best study techniques for university students',
     metaDesc:'Evidence-based study techniques for university: active recall, spaced repetition, the tutorial-first method for STEM, and managing semester workload.',
     date:'2026-02-18', read:'8 min read',
@@ -251,8 +251,8 @@ const POSTS = [
 ];
 
 const TUTORS = [
-  {name:'Thandi Nkosi',photo:'tutors/thandi.jpg',ini:'TN',c:'#0B5FFF',uni:'University of Cape Town',deg:'BSc Actuarial Science',subs:['Mathematics','Statistics'],yrs:4,lessons:620},
-  {name:'James van der Merwe',photo:'tutors/james.jpg',ini:'JV',c:'#00BFA6',uni:'Stellenbosch University',deg:'BEng Mechanical (Hons)',subs:['Physical Sciences','Engineering'],yrs:5,lessons:810},
+  {name:'Thandi Nkosi',photo:'tutors/thandi.jpg',ini:'TN',c:'#4F46E5',uni:'University of Cape Town',deg:'BSc Actuarial Science',subs:['Mathematics','Statistics'],yrs:4,lessons:620},
+  {name:'James van der Merwe',photo:'tutors/james.jpg',ini:'JV',c:'#8B5CF6',uni:'Stellenbosch University',deg:'BEng Mechanical (Hons)',subs:['Physical Sciences','Engineering'],yrs:5,lessons:810},
   {name:'Aisha Patel',photo:'tutors/aisha.jpg',ini:'AP',c:'#6C4CF1',uni:'University of the Witwatersrand',deg:'BCom Accounting Science',subs:['Accounting','Economics'],yrs:3,lessons:450},
   {name:'Sipho Mabaso',photo:'tutors/sipho.jpg',ini:'SM',c:'#FF7A45',uni:'University of Pretoria',deg:'BSc Computer Science',subs:['Programming','Mathematics'],yrs:4,lessons:530},
   {name:'Emma Botha',photo:'tutors/emma.jpg',ini:'EB',c:'#E0559B',uni:'University of Cape Town',deg:'BA English & Linguistics',subs:['English','History'],yrs:6,lessons:940},
@@ -260,8 +260,8 @@ const TUTORS = [
 ];
 
 const STORIES = [
-  {ini:'S',c:'#0B5FFF',from:'52%',to:'81%',subj:'Mathematics',quote:'Whiz Tutoring helped me gain confidence and improve my marks in just one term. My tutor never made me feel stupid for asking questions.',name:'Sarah M.',who:'Grade 11 · Rondebosch'},
-  {ini:'K',c:'#00BFA6',from:'48%',to:'74%',subj:'Physical Sciences',quote:'I went from dreading physics to actually choosing it for matric. The past-paper practice before exams made all the difference.',name:'Kabelo T.',who:'Grade 12 · Claremont'},
+  {ini:'S',c:'#4F46E5',from:'52%',to:'81%',subj:'Mathematics',quote:'Whiz Tutoring helped me gain confidence and improve my marks in just one term. My tutor never made me feel stupid for asking questions.',name:'Sarah M.',who:'Grade 11 · Rondebosch'},
+  {ini:'K',c:'#8B5CF6',from:'48%',to:'74%',subj:'Physical Sciences',quote:'I went from dreading physics to actually choosing it for matric. The past-paper practice before exams made all the difference.',name:'Kabelo T.',who:'Grade 12 · Claremont'},
   {ini:'L',c:'#6C4CF1',from:'61%',to:'88%',subj:'Accounting',quote:'My tutor explained accounting the way my teacher never could. I got a distinction in prelims and my final matric exam.',name:'Lerato K.',who:'Matric · Durbanville'},
   {ini:'D',c:'#FF7A45',from:'55%',to:'79%',subj:'IGCSE Maths',quote:'Being in Lusaka, online lessons were perfect. Same tutor every week, and my Cambridge results jumped two grade boundaries.',name:'Daniel B.',who:'IGCSE · Lusaka, Zambia'}
 ];
@@ -297,4 +297,14 @@ const SUBJECT_CARDS = [
   {name:'Private tutoring',icon:'🎓',bg:'#FFF4DC',desc:'Screened home tutors for any subject across Cape Town.',link:'/private-tutor-cape-town/'}
 ];
 
-module.exports = { SITE, SUBJECT_PAGES, SUBURBS, POSTS, TUTORS, STORIES, SEED_REVIEWS, FAQS, SUBJECT_CARDS };
+// University logos for the trust strip. Drop the official file at src/img/logos/<file>.svg|.png|.webp
+// (only with the university's written permission) — until then the short name shows as text.
+const UNIVERSITIES = [
+  {short:'UCT', name:'University of Cape Town', file:'uct'},
+  {short:'Stellenbosch', name:'Stellenbosch University', file:'stellenbosch'},
+  {short:'Wits', name:'University of the Witwatersrand', file:'wits'},
+  {short:'UP', name:'University of Pretoria', file:'up'},
+  {short:'UJ', name:'University of Johannesburg', file:'uj'}
+];
+
+module.exports = { UNIVERSITIES, SITE, SUBJECT_PAGES, SUBURBS, POSTS, TUTORS, STORIES, SEED_REVIEWS, FAQS, SUBJECT_CARDS };

@@ -1,14 +1,16 @@
 :root{
-  --blue:#0B5FFF; --blue-dark:#0546C4; --blue-tint:#EDF3FF;
-  --teal:#00BFA6; --teal-tint:#E6FAF6;
+  /* brand: violet #7C3AED → blue #3B82F6, navy #0F172A (see src/img/brand/README.md) */
+  --violet:#7C3AED; --brand-blue:#3B82F6; --sky:#60A5FA;
+  --blue:#4F46E5; --blue-dark:#4338CA; --blue-tint:#EEF0FF;
+  --teal:#7C3AED; --teal-tint:#F3EEFF;
   --gold:#FFB000; --gold-tint:#FFF4DC;
-  --ink:#1B1F24; --slate:#5A6472; --mist:#8B94A3;
-  --bg:#FFFFFF; --gray:#F7F8FA; --line:#E8ECF3;
+  --ink:#0F172A; --slate:#475569; --mist:#7C8597;
+  --bg:#FFFFFF; --gray:#F7F8FA; --line:#E5E7EB;
   --r-lg:20px; --r-md:14px; --r-sm:10px;
   --shadow-sm:0 1px 2px rgba(16,24,40,.05);
   --shadow-md:0 6px 20px -4px rgba(16,24,40,.08),0 2px 6px -2px rgba(16,24,40,.04);
-  --shadow-lg:0 18px 44px -10px rgba(11,95,255,.14),0 6px 16px -6px rgba(16,24,40,.06);
-  --font-display:'Manrope',system-ui,sans-serif;
+  --shadow-lg:0 18px 44px -10px rgba(79,70,229,.14),0 6px 16px -6px rgba(16,24,40,.06);
+  --font-display:'Montserrat',system-ui,sans-serif;
   --font-body:'Inter',system-ui,sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -45,8 +47,8 @@ h3{font-size:22px;font-weight:700}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:none;border-radius:999px;
   font:600 16px/1 var(--font-body);padding:16px 30px;transition:transform .18s ease,box-shadow .18s ease,background .18s ease}
 .btn svg{width:17px;height:17px}
-.btn-primary{background:linear-gradient(135deg,var(--blue) 0%,#2E7BFF 100%);color:#fff;box-shadow:0 8px 20px -6px rgba(11,95,255,.45)}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 28px -8px rgba(11,95,255,.5)}
+.btn-primary{background:linear-gradient(135deg,var(--violet) 0%,var(--blue) 55%,var(--brand-blue) 100%);color:#fff;box-shadow:0 8px 20px -6px rgba(79,70,229,.45)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 28px -8px rgba(79,70,229,.5)}
 .btn-ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line);box-shadow:var(--shadow-sm)}
 .btn-ghost:hover{border-color:var(--blue);color:var(--blue);transform:translateY(-2px)}
 .btn-teal{background:var(--teal);color:#fff;box-shadow:0 8px 20px -6px rgba(0,191,166,.4)}
@@ -60,8 +62,8 @@ h3{font-size:22px;font-weight:700}
 .nav.scrolled{border-color:var(--line);box-shadow:var(--shadow-sm)}
 .nav-inner{display:flex;align-items:center;gap:32px;height:84px}
 .logo{display:flex;align-items:center;gap:12px;font:800 29px var(--font-display);letter-spacing:-.03em;white-space:nowrap}
-.logo-mark{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--blue),#2E7BFF);
-  display:grid;place-items:center;color:#fff;font-size:25px;box-shadow:0 6px 14px -4px rgba(11,95,255,.5)}
+.logo-mark{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--violet),var(--brand-blue));
+  display:grid;place-items:center;color:#fff;font-size:25px;box-shadow:0 6px 14px -4px rgba(79,70,229,.5)}
 .logo em{font-style:normal;color:var(--blue)}
 .nav-links{display:flex;gap:4px;margin-left:auto;list-style:none}
 .nav-links a{font:500 15px var(--font-body);color:var(--slate);padding:9px 13px;border-radius:9px;transition:.15s}
@@ -77,9 +79,9 @@ h3{font-size:22px;font-weight:700}
 /* ===== Hero ===== */
 .hero{padding:164px 0 90px;position:relative;overflow:hidden}
 .hero::before{content:"";position:absolute;top:-280px;right:-220px;width:720px;height:720px;border-radius:50%;
-  background:radial-gradient(circle,var(--blue-tint) 0%,rgba(237,243,255,0) 65%)}
+  background:radial-gradient(circle,var(--blue-tint) 0%,rgba(238,240,255,0) 65%)}
 .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:64px;align-items:center;position:relative}
-.hero-badge{display:inline-flex;align-items:center;gap:9px;background:var(--teal-tint);color:#00806F;
+.hero-badge{display:inline-flex;align-items:center;gap:9px;background:var(--teal-tint);color:#6D28D9;
   font:600 13.5px var(--font-body);padding:8px 16px;border-radius:999px;margin-bottom:22px}
 .hero-badge .dot{width:8px;height:8px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,191,166,.4)}50%{box-shadow:0 0 0 6px rgba(0,191,166,0)}}
@@ -100,7 +102,7 @@ h3{font-size:22px;font-weight:700}
 .lc-avatar{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;color:#fff;font:800 19px var(--font-display)}
 .lc-name{font:700 16.5px var(--font-display)}
 .lc-sub{font-size:13.5px;color:var(--mist)}
-.lc-live{margin-left:auto;font:600 12px var(--font-body);color:#00806F;background:var(--teal-tint);padding:5px 11px;border-radius:999px}
+.lc-live{margin-left:auto;font:600 12px var(--font-body);color:#6D28D9;background:var(--teal-tint);padding:5px 11px;border-radius:999px}
 .lc-board{background:var(--gray);border-radius:var(--r-md);padding:18px;font-family:var(--font-display)}
 .lc-board .eq{font-size:19px;font-weight:700;color:var(--ink)}
 .lc-board .step{font:500 14px var(--font-body);color:var(--slate);margin-top:8px;display:flex;gap:8px;align-items:center}
@@ -132,7 +134,7 @@ h3{font-size:22px;font-weight:700}
 .logo-row i{font-style:normal;font-size:13px;color:#C9CFD9}
 
 /* ===== Stats ===== */
-.stats{background:linear-gradient(135deg,#0A2A6B 0%,var(--blue) 60%,#2E7BFF 100%);border-radius:28px;
+.stats{background:linear-gradient(135deg,#0F172A 0%,#4C1D95 35%,var(--violet) 65%,var(--brand-blue) 100%);border-radius:28px;
   padding:58px 48px;display:grid;grid-template-columns:repeat(4,1fr);gap:32px;color:#fff;position:relative;overflow:hidden}
 .stats::after{content:"";position:absolute;top:-90px;right:-60px;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,.07)}
 .stat b{font:800 clamp(34px,3.4vw,46px)/1.1 var(--font-display);display:block}
@@ -230,7 +232,7 @@ h3{font-size:22px;font-weight:700}
 .faq-item .faq-a{padding:0 24px 22px;color:var(--slate);font-size:15.5px}
 
 /* ===== Final CTA ===== */
-.final-cta{background:linear-gradient(135deg,#0A2A6B,var(--blue) 55%,#2E7BFF);border-radius:32px;padding:clamp(48px,6vw,84px);
+.final-cta{background:linear-gradient(135deg,#0F172A,#4C1D95 30%,var(--violet) 60%,var(--brand-blue));border-radius:32px;padding:clamp(48px,6vw,84px);
   text-align:center;color:#fff;position:relative;overflow:hidden}
 .final-cta::before,.final-cta::after{content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.07)}
 .final-cta::before{width:340px;height:340px;top:-140px;left:-100px}
@@ -438,7 +440,7 @@ footer{background:#10141B;color:#B9C1CD;padding:70px 0 34px;margin-top:96px}
 @media (max-width:860px){.callback{grid-template-columns:1fr}.callback form{flex-direction:column}}
 
 /* ===== Lead magnet ===== */
-.magnet{background:linear-gradient(135deg,var(--blue-tint),#fff);border:1px solid #D6E4FF;border-radius:24px;padding:36px 40px;display:grid;grid-template-columns:auto 1fr auto;gap:26px;align-items:center}
+.magnet{background:linear-gradient(135deg,var(--blue-tint),#fff);border:1px solid #DDD6FE;border-radius:24px;padding:36px 40px;display:grid;grid-template-columns:auto 1fr auto;gap:26px;align-items:center}
 .magnet .doc{width:64px;height:80px;background:#fff;border:1px solid var(--line);border-radius:8px 18px 8px 8px;box-shadow:var(--shadow-md);display:grid;place-items:center;font-size:28px}
 @media (max-width:860px){.magnet{grid-template-columns:1fr;text-align:center}.magnet .doc{margin:0 auto}}
 
@@ -598,3 +600,15 @@ img{height:auto}
   body{padding-bottom:76px}
   .hero-ctas .btn{flex:1 1 100%}
 }
+
+/* university logos in the trust strip (files in src/img/logos/) */
+.logo-row{align-items:center}
+.uni-logo{height:48px;width:auto;max-width:150px;object-fit:contain;filter:grayscale(1);opacity:.65;transition:filter .2s,opacity .2s}
+.uni-logo:hover{filter:none;opacity:1}
+@media (max-width:720px){.uni-logo{height:38px}}
+
+/* ---------- brand logo (files in src/img/brand/) ---------- */
+.logo img{height:56px;width:auto;display:block}
+.logo-foot img{height:72px}
+@media (max-width:720px){ .logo img{height:44px} .logo-foot img{height:64px} }
+.hero-badge .dot{background:var(--violet)}

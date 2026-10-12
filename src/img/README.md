@@ -7,6 +7,7 @@ coloured initials / illustrated hero, so the site never shows a broken image.
 |---|---|---|
 | `hero.jpg` | Home page hero (right side) | A real lesson: tutor + learner at a table or laptop, both smiling. Portrait-ish, ~900×1000px. |
 | `tutors/thandi.jpg`, `tutors/james.jpg`, … | Home "Meet your tutors" + /tutors/ page | Square head-and-shoulders, ~400×400px, natural light. File name = tutor's first name in lowercase (see `photo:` in `src/data.js`). |
+| `logos/uct.svg`, `logos/stellenbosch.svg`, `logos/wits.svg`, `logos/up.svg`, `logos/uj.svg` | Home page trust strip | SVG preferred (PNG/WebP also work). Transparent background. Shown in greyscale, full colour on hover. **Only with written permission from each university's brand/marketing office** — logos imply endorsement. |
 
 Optional: add a `quote:'Why I love tutoring maths…'` field to a tutor in `src/data.js` and it
 shows under their photo on the home page. Only use the tutor's own words, with permission.

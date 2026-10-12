@@ -24,7 +24,7 @@
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/assets/img/brand/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/img/brand/apple-touch-icon.png">
-<link rel="stylesheet" href="/assets/style.css?v=27c3fa2c">
+<link rel="stylesheet" href="/assets/style.css?v=0d0a4a6a">
 <script>document.documentElement.classList.add('js')</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":["EducationalOrganization","LocalBusiness"],"@id":"https://www.whiztutors.co.za/#organization","name":"Whiz Tutoring","url":"https://www.whiztutors.co.za","email":"whiztutors@gmail.com","telephone":"+27 62 420 4922","description":"Premium one-on-one tutoring from South Africa’s top university students and graduates. Online and in person across Cape Town.","address":{"@type":"PostalAddress","addressLocality":"Cape Town","addressRegion":"Western Cape","addressCountry":"ZA"},"areaServed":[{"@type":"City","name":"Cape Town"},{"@type":"Country","name":"South Africa"},{"@type":"Country","name":"Zambia"}],"aggregateRating":{"@type":"AggregateRating","ratingValue":4.9,"reviewCount":640,"bestRating":5},"sameAs":["https://maps.google.com/?q=Whiz+Tutoring+Cape+Town"]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","url":"https://www.whiztutors.co.za","name":"Whiz Tutoring","publisher":{"@id":"https://www.whiztutors.co.za/#organization"}}</script>
@@ -38,7 +38,6 @@
       <li><a href="/subjects/">Subjects</a></li>
       <li><a href="/areas/">Areas</a></li>
       <li><a href="/tutors/">Tutors</a></li>
-      <li><a href="/pricing/">Pricing</a></li>
       <li><a href="/blog/">Blog</a></li>
       <li><a href="/about/">About</a></li>
       <li><a href="/contact/">Contact</a></li>
@@ -52,7 +51,7 @@
 </nav>
 <div class="mobile-menu" id="mobileMenu">
   <a href="/">Home</a><a href="/subjects/">Subjects</a><a href="/areas/">Areas</a><a href="/tutors/">Tutors</a>
-  <a href="/pricing/">Pricing</a><a href="/blog/">Blog</a><a href="/about/">About</a><a href="/contact/">Contact</a><a href="/become-a-tutor/">Become a Tutor</a>
+  <a href="/blog/">Blog</a><a href="/about/">About</a><a href="/contact/">Contact</a><a href="/become-a-tutor/">Become a Tutor</a>
   <button class="btn btn-primary" onclick="openBooking()">Book a Tutor</button>
 </div>
 <main id="main">
@@ -74,6 +73,7 @@
     <span class="eyebrow">Our mission</span>
     <h2 style="font-size:29px">Great teaching shouldn't depend on which school you attend</h2>
     <p style="color:var(--slate);margin-top:16px">We pair learners across Cape Town — and increasingly the rest of South Africa and Zambia — with tutors from the country's leading universities. Not just people who know the work, but people who can explain it, encourage, and rebuild the confidence that struggling in a subject quietly erodes.</p>
+    <figure class="scene reveal"><img src="/assets/img/scenes/studying.jpg" alt="A learner working through her notes at a desk" loading="lazy" width="1000" height="600"></figure>
     <div class="timeline">
       <div class="tl-item"><b>2017</b><p>Founded in Cape Town by three UCT students tutoring maths from a res common room.</p></div>
       <div class="tl-item"><b>2019</b><p>Expanded across the Cape Town metro; launched formal tutor screening and training.</p></div>
@@ -139,7 +139,7 @@
 </section>
 
 <section class="section tight"><div class="container reveal"><div class="final-cta">
-  <h2>Ready to start?</h2><p>Find the perfect tutor today. Your first lesson is a half-price trial — if it’s not a great fit, we’ll rematch you free of charge.</p>
+  <h2>Ready to start?</h2><p>Find the perfect tutor today. If your first tutor isn’t a great fit, we’ll rematch you.</p>
   <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative">
     <button class="btn btn-lg btn-gold" onclick="openBooking()">Book a Tutor</button>
     <a class="btn btn-lg ghost-w" href="https://wa.me/27624204922" target="_blank" rel="noopener">Chat on WhatsApp</a>
@@ -203,7 +203,7 @@
   <div class="modal">
     <button class="modal-close" onclick="closeBooking()" aria-label="Close">✕</button>
     <h3 id="bookTitle">Book a Tutor</h3>
-    <p class="sub">Takes about a minute · half-price first lesson · no payment now · free rematch if it’s not the right fit.</p>
+    <p class="sub">Takes about a minute · we reply within 24 hours · free rematch if it’s not the right fit.</p>
     <form data-lead="booking" class="wizard" novalidate>
       <div class="hp" aria-hidden="true"><label>Leave this field empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
       <div class="wz-progress" aria-hidden="true"><span id="wzBar"></span></div>
@@ -286,6 +286,6 @@
 </div>
 
 <div class="toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span id="toastMsg"></span></div>
-<script src="/assets/main.js?v=27c3fa2c" defer></script>
+<script src="/assets/main.js?v=0d0a4a6a" defer></script>
 </body>
 </html>

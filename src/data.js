@@ -26,7 +26,7 @@ const SITE = {
 const SUBJECT_PAGES = [
   { slug:'maths-tutor-cape-town', kw:'Maths Tutor Cape Town', subject:'Mathematics', icon:'➗',
     title:'Maths Tutors in Cape Town | Grades 4–12 & Matric',
-    metaDesc:'Top-rated maths tutors in Cape Town from UCT & Stellenbosch. One-on-one lessons at your home or online. CAPS, IEB & Cambridge. Half-price trial lesson.',
+    metaDesc:'Top-rated maths tutors in Cape Town from UCT & Stellenbosch. One-on-one lessons at your home or online. CAPS, IEB & Cambridge. Matched within 24 hours.',
     h1:'Maths Tutors in Cape Town', eyebrow:'Mathematics · Cape Town',
     lead:'One-on-one maths tutoring across Cape Town — Southern Suburbs, Atlantic Seaboard and Northern Suburbs — from top UCT and Stellenbosch students. At your home or online.',
     subhead:'Why Cape Town families choose Whiz for maths',
@@ -38,11 +38,11 @@ const SUBJECT_PAGES = [
     h1:'Physics Tutors in Cape Town', eyebrow:'Physical Sciences · Cape Town',
     lead:'Physical Sciences tutoring from UCT engineering and science students who make physics and chemistry finally click. At your home or online.',
     subhead:'Physical Sciences help that actually works',
-    points:['Tutors from UCT and Stellenbosch science & engineering faculties','Concept-first teaching — understand it, don\u2019t just memorise it','Exam technique for Paper 1 (physics) and Paper 2 (chemistry)','Grade 10–12 CAPS and IEB, plus IGCSE and A-Level','Half-price trial lesson to test the fit'],
+    points:['Tutors from UCT and Stellenbosch science & engineering faculties','Concept-first teaching — understand it, don\u2019t just memorise it','Exam technique for Paper 1 (physics) and Paper 2 (chemistry)','Grade 10–12 CAPS and IEB, plus IGCSE and A-Level','A trial lesson to test the fit'],
     body:'Physical Sciences has the widest gap between "knowing the theory" and "scoring the marks". Our Cape Town physics tutors — mostly engineering and science students who recently wrote these exact papers — teach concept-first: free-body diagrams you can actually draw, stoichiometry as a method rather than magic, and electricity that finally makes sense. Then we drill the mark scheme, because examiners reward specific phrasing and working. Available across the Southern Suburbs, City Bowl and Northern Suburbs in person, and everywhere online.'},
   { slug:'english-tutor-cape-town', kw:'English Tutor Cape Town', subject:'English', icon:'📖',
     title:'English Tutors in Cape Town | Home Language & FAL',
-    metaDesc:'English tutors in Cape Town for comprehension, essays, literature & language. Home Language and FAL, Grades 4–12. In-person or online. Trial lesson 50% off.',
+    metaDesc:'English tutors in Cape Town for comprehension, essays, literature & language. Home Language and FAL, Grades 4–12. In-person or online. Matched within 24 hours.',
     h1:'English Tutors in Cape Town', eyebrow:'English · Cape Town',
     lead:'Comprehension, creative writing, literature and language structures — taught by tutors who love the subject and know how markers think.',
     subhead:'From "I don\u2019t know what to write" to confident essays',
@@ -50,7 +50,7 @@ const SUBJECT_PAGES = [
     body:'English marks are won on method, not luck. Our Cape Town English tutors teach the frameworks — how to plan an essay in five minutes, how to quote and analyse rather than retell, how to attack a comprehension passage systematically. For younger learners we build reading confidence and writing fluency; for matrics we focus ruthlessly on the paper. Tutors are senior humanities students and graduates from UCT with excellent academic writing records.'},
   { slug:'accounting-tutor-cape-town', kw:'Accounting Tutor Cape Town', subject:'Accounting', icon:'📊',
     title:'Accounting Tutors in Cape Town | Gr 8–12 & Matric',
-    metaDesc:'Accounting tutors in Cape Town on the CA(SA) academic path. Journals to cash-flow statements, CAPS & IEB. Home or online lessons. Book a half-price trial.',
+    metaDesc:'Accounting tutors in Cape Town on the CA(SA) academic path. Journals to cash-flow statements, CAPS & IEB. Home or online lessons. Book a trial lesson.',
     h1:'Accounting Tutors in Cape Town', eyebrow:'Accounting · Cape Town',
     lead:'Accounting tutoring from BCom and CA-stream students at UCT and Stellenbosch. From general ledger basics to matric distinctions.',
     subhead:'From confused to confident in accounting',
@@ -66,7 +66,7 @@ const SUBJECT_PAGES = [
     body:'Online tutoring removes the biggest constraint in education: geography. A learner in Mthatha, Polokwane or Lusaka gets the same distinction-level UCT tutor as a family in Claremont. Our online lessons run on an interactive whiteboard where tutor and student write, draw and solve together — far more effective than a webcam pointed at paper. Every subject, every grade, and exam-season intensives that don\u2019t depend on traffic or load-shedding schedules.'},
   { slug:'private-tutor-cape-town', kw:'Private Tutor Cape Town', subject:'All subjects', icon:'🎓',
     title:'Private Tutors in Cape Town | Screened University Tutors',
-    metaDesc:'Private tutors in Cape Town for every subject, Grades 4–12 & university. Carefully screened UCT & Stellenbosch tutors. Home visits or online. Trial 50% off.',
+    metaDesc:'Private tutors in Cape Town for every subject, Grades 4–12 & university. Carefully screened UCT & Stellenbosch tutors. Home visits or online. Matched within 24 hours.',
     h1:'Private Tutors in Cape Town', eyebrow:'Private tutoring · Cape Town',
     lead:'Carefully screened private tutors for every subject and grade — matched to your child, at your home across Cape Town or online.',
     subhead:'What "carefully screened" actually means',
@@ -142,8 +142,6 @@ const POSTS = [
 <p>1. Which syllabus do you know best — CAPS, IEB or Cambridge? They differ more than people think. 2. How do you handle a student who\u2019s lost confidence, not just marks? 3. Will you set and check homework between lessons? 4. How do you report progress to parents? 5. What happens if the fit isn\u2019t right?</p>
 <h2>Red flags</h2>
 <p>Be cautious of tutors who promise specific mark improvements, can\u2019t name the current Grade 12 syllabus topics, resist any form of progress reporting, or teach straight from a textbook without past papers. And for home tutoring, always confirm background checks have been done.</p>
-<h2>What tutoring costs in Cape Town</h2>
-<p>In 2026, expect roughly R250–R400 per hour for a vetted university-student tutor, and more for scarce specialists (AP Maths, A-Level Further Maths). Cheaper usually means unvetted; dramatically more expensive rarely means proportionally better.</p>
 <h2>The trial lesson test</h2>
 <p>A good first lesson diagnoses before it teaches: the tutor should find the real gaps (often two grades back) rather than launching into this week\u2019s homework. If your child comes out saying "that actually made sense" — you\u2019ve found your tutor.</p>` },
   { slug:'top-study-tips-for-matric-students', cat:'Exam prep', icon:'🎯', g:'linear-gradient(135deg,#00BFA6,#34D8C0)',
@@ -279,9 +277,8 @@ const FAQS = [
   {q:'How are tutors selected?',a:'Fewer than 1 in 8 applicants make it. Every tutor must be a current student or graduate of a leading university with at least 70% in the subjects they teach, then pass a written subject test, a live teaching demonstration, an interview and a background check before any home placement.'},
   {q:'Do you offer tutoring at my home in Cape Town?',a:'Yes — in-person home tutoring is available across the Southern Suburbs (Claremont, Rondebosch, Newlands, Constantia and surrounds), the Atlantic Seaboard (Sea Point, Camps Bay), the City Bowl, the Northern Suburbs (Durbanville, Bellville) and the Helderberg (Somerset West). Online lessons cover everywhere else in South Africa and Zambia.'},
   {q:'Should we choose online or in-person lessons?',a:'Both use the same tutors and lesson structure. Online lessons use an interactive whiteboard and are recorded on request — great for consistency and the widest tutor choice. In-person lessons suit younger learners who focus better face-to-face. Many families mix both.'},
-  {q:'How much does tutoring cost?',a:'It depends on the grade, the subject and whether lessons are online or at your home. Request our price guide on the Pricing page and we\u2019ll email it to you straight away. Every option includes a half-price first lesson, with no signup fees or contracts.'},
   {q:'What is your cancellation policy?',a:'Reschedule or cancel any lesson free of charge with 24 hours\u2019 notice — just message your tutor or our WhatsApp line. Lessons cancelled with less notice are billed, since your tutor has reserved that time.'},
-  {q:'Can we try a lesson before committing?',a:'Yes — every new student starts with a half-price trial lesson. If the fit isn\u2019t right, we\u2019ll rematch you with a different tutor at no cost. About 92% of families continue after the trial.'},
+  {q:'Can we try a lesson before committing?',a:'Yes — every new student starts with a trial lesson. If the fit isn\u2019t right, we\u2019ll rematch you with a different tutor at no cost. About 92% of families continue after the trial.'},
   {q:'How quickly can we start?',a:'Most families are matched within 24 hours of sending an enquiry and have their first lesson within the week. During exam season we recommend booking a few days ahead.'}
 ];
 

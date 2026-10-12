@@ -18,7 +18,13 @@ const ASSET_V = require('crypto').createHash('md5').update(css + fs.readFileSync
 if (fs.existsSync('src/img')) fs.cpSync('src/img', path.join(DIST, 'assets/img'), { recursive: true, filter: f => !f.endsWith('.md') });
 if (fs.existsSync('src/img/brand/favicon.ico')) fs.copyFileSync('src/img/brand/favicon.ico', path.join(DIST, 'favicon.ico'));
 const hasImg = f => !!f && fs.existsSync(path.join('src/img', f));
-const tutorFace = t => hasImg(t.photo) ? `<img src="/assets/img/${t.photo}" alt="${t.name}, Whiz tutor" loading="lazy" width="200" height="200">` : t.ini;
+const scene = (f, alt) => hasImg(f) ? `<figure class="scene reveal"><img src="/assets/img/${f}" alt="${alt}" loading="lazy" width="1000" height="600"></figure>` : '';
+// tutor picture: real photo if provided → illustrated avatar → initials
+const tutorFace = t => {
+  if (hasImg(t.photo)) return `<img src="/assets/img/${t.photo}" alt="${t.name}, Whiz tutor" loading="lazy" width="200" height="200">`;
+  const av = `tutors/${t.name.split(" ")[0].toLowerCase()}.svg`;
+  return hasImg(av) ? `<img src="/assets/img/${av}" alt="Illustration of ${t.name}" loading="lazy" width="200" height="200">` : t.ini;
+};
 
 const ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 const TICK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>';
@@ -124,7 +130,6 @@ function navHTML() {
       <li><a href="/subjects/">Subjects</a></li>
       <li><a href="/areas/">Areas</a></li>
       <li><a href="/tutors/">Tutors</a></li>
-      <li><a href="/pricing/">Pricing</a></li>
       <li><a href="/blog/">Blog</a></li>
       <li><a href="/about/">About</a></li>
       <li><a href="/contact/">Contact</a></li>
@@ -138,7 +143,7 @@ function navHTML() {
 </nav>
 <div class="mobile-menu" id="mobileMenu">
   <a href="/">Home</a><a href="/subjects/">Subjects</a><a href="/areas/">Areas</a><a href="/tutors/">Tutors</a>
-  <a href="/pricing/">Pricing</a><a href="/blog/">Blog</a><a href="/about/">About</a><a href="/contact/">Contact</a><a href="/become-a-tutor/">Become a Tutor</a>
+  <a href="/blog/">Blog</a><a href="/about/">About</a><a href="/contact/">Contact</a><a href="/become-a-tutor/">Become a Tutor</a>
   <button class="btn btn-primary" onclick="openBooking()">Book a Tutor</button>
 </div>`;
 }
@@ -205,7 +210,7 @@ function chromeHTML() {
   <div class="modal">
     <button class="modal-close" onclick="closeBooking()" aria-label="Close">✕</button>
     <h3 id="bookTitle">Book a Tutor</h3>
-    <p class="sub">Takes about a minute · half-price first lesson · no payment now · free rematch if it\u2019s not the right fit.</p>
+    <p class="sub">Takes about a minute · we reply within 24 hours · free rematch if it\u2019s not the right fit.</p>
     <form data-lead="booking" class="wizard" novalidate>
       <div class="hp" aria-hidden="true"><label>Leave this field empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
       <div class="wz-progress" aria-hidden="true"><span id="wzBar"></span></div>
@@ -347,7 +352,7 @@ function reviewsBlock(h2 = 'What Cape Town parents say on Google') {
 </section>`;
 }
 
-function ctaBlock(h = 'Ready to start?', p = 'Find the perfect tutor today. Your first lesson is a half-price trial — if it\u2019s not a great fit, we\u2019ll rematch you free of charge.') {
+function ctaBlock(h = 'Ready to start?', p = 'Find the perfect tutor today. If your first tutor isn\u2019t a great fit, we\u2019ll rematch you.') {
   return `
 <section class="section tight"><div class="container reveal"><div class="final-cta">
   <h2>${h}</h2><p>${p}</p>
@@ -417,7 +422,7 @@ const write = (rel, html) => {
         <button class="btn btn-primary btn-lg" onclick="openBooking()">Book a Tutor ${ARROW}</button>
         <a class="btn btn-ghost btn-lg btn-wa" href="https://wa.me/${SITE.whatsapp}?text=Hi%20Whiz%20Tutoring!%20I%E2%80%99d%20like%20to%20enquire%20about%20a%20tutor." target="_blank" rel="noopener">${WA_SVG.replace('viewBox', 'width="20" height="20" viewBox')} Chat on WhatsApp</a>
       </div>
-      <p class="hero-reassure">${TICK}<span><b>Half-price first lesson</b> · no contracts · free rematch if it\u2019s not the right fit</span></p>
+      <p class="hero-reassure">${TICK}<span><b>Matched within 24 hours</b> · no contracts · free rematch if it\u2019s not the right fit</span></p>
       <div class="quick-start">
         <p>Or start here — what do you need help with?</p>
         <div>${['Mathematics', 'Physical Sciences', 'English', 'Accounting', 'Multiple / other'].map(x => `<button type="button" onclick="openBooking('${x}')">${x === 'Multiple / other' ? 'Something else' : x}</button>`).join('')}</div>
@@ -468,7 +473,7 @@ ${statsBlock}
     ${[
       ['M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z', 'Screened tutors from top universities', 'UCT, Stellenbosch, Wits, UP and UJ students and graduates. Subject tests, teaching demos and background checks — fewer than 1 in 8 applicants join.'],
       ['M12 7v5l3 3M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z', 'At home or online, on your schedule', 'Face-to-face anywhere in Cape Town or live whiteboard lessons nationwide. Evenings, weekends and exam-season intensives.'],
-      ['M3 17l6-6 4 4 8-8M14 7h7v7', 'Progress you can see, pricing you can trust', 'A short report after every lesson, a half-price first lesson, and no signup fees or contracts.']
+      ['M3 17l6-6 4 4 8-8M14 7h7v7', 'Progress you can see', 'A short report after every lesson and a full term review, so parents always know where things stand.']
     ].map(w => `<div class="card feature-card reveal"><div class="fc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${w[0]}"/></svg></div><h3>${w[1]}</h3><p>${w[2]}</p></div>`).join('')}
   </div>
 </div></section>
@@ -477,7 +482,7 @@ ${statsBlock}
   <div class="steps reveal">
     <div class="step-card"><h3>Tell us what you need</h3><p>Send a two-minute enquiry: subject, grade, goals and how your child learns best.</p><span class="arrow">${ARROW.replace('viewBox', 'width="16" height="16" viewBox')}</span></div>
     <div class="step-card"><h3>Get matched with the perfect tutor</h3><p>We hand-pick a screened tutor whose personality and teaching style fit — usually within 24 hours.</p><span class="arrow">${ARROW.replace('viewBox', 'width="16" height="16" viewBox')}</span></div>
-    <div class="step-card"><h3>Start improving your grades</h3><p>Book a half-price trial lesson, track progress after every session, and watch marks — and confidence — climb.</p><span class="arrow"></span></div>
+    <div class="step-card"><h3>Start improving your grades</h3><p>Start with a trial lesson, track progress after every session, and watch marks — and confidence — climb.</p><span class="arrow"></span></div>
   </div>
   <div style="text-align:center;margin-top:44px" class="reveal"><button class="btn btn-primary btn-lg" onclick="openBooking()">Start with a trial lesson</button></div>
 </div></section>
@@ -500,7 +505,7 @@ ${reviewsBlock()}
 ${ctaBlock()}`;
   write('index.html', layout({
     title: 'Private Tutors Cape Town | Maths, Science & More — Whiz Tutoring',
-    desc: 'Top-rated private tutors in Cape Town & online across South Africa. Screened tutors from UCT & Stellenbosch for maths, physics, English & every subject. Half-price trial lesson.',
+    desc: 'Top-rated private tutors in Cape Town & online across South Africa. Screened tutors from UCT & Stellenbosch for maths, physics, English & every subject. Matched within 24 hours.',
     canonical: '/', body,
     schemas: [faqSchema, ...reviewsSchema]
   }));
@@ -545,7 +550,7 @@ ${pageHero(p.eyebrow, p.h1, p.lead, `<a href="/">Home</a> / <a href="/subjects/"
   </div>
 </div></section>
 ${reviewsBlock('Rated ' + SITE.rating + ' by Cape Town families')}
-${ctaBlock('Find your ' + p.kw.toLowerCase() + ' today', 'Half-price trial lesson · matched within 24 hours · free rematch if the fit isn\u2019t right.')}`;
+${ctaBlock('Find your ' + p.kw.toLowerCase() + ' today', 'Matched within 24 hours · free rematch if the fit isn\u2019t right.')}`;
   write(`${p.slug}/index.html`, layout({
     title: p.title + ' — Whiz Tutoring',
     desc: p.metaDesc,
@@ -667,54 +672,6 @@ ${pageHero('Our tutors', 'Carefully screened. Genuinely brilliant.', 'Top studen
 ${callbackBlock()}
 ${ctaBlock()}` }));
 
-// ============ PRICING (private: prices are emailed on request, never published) ============
-{
-  const tick = TICK.replace('viewBox', 'width="18" height="18" viewBox');
-  write('pricing/index.html', layout({
-    title: 'Tutoring Prices | Request Our Price Guide — Whiz Tutoring',
-    desc: 'Request the Whiz Tutoring price guide for private tutoring in Cape Town and online. Pay-as-you-go, term packages and matric intensives. Half-price first lesson, no contracts.',
-    canonical: '/pricing/',
-    schemas: [breadcrumb([['Home', '/'], ['Pricing', '/pricing/']])],
-    body: `
-${pageHero('Pricing', 'Get our price guide', 'Our rates depend on the grade, the subject and whether lessons are online or at home. Tell us a little about your child and we’ll email you the full price guide straight away.', '<a href="/">Home</a> / <span>Pricing</span>')}
-<section class="section tight"><div class="container">
-  <div class="price-request">
-    <div class="pr-info">
-      <h2 style="font-size:26px">Every option includes</h2>
-      <ul class="pr-list">
-        <li>${tick}A screened, matched tutor, with a free rematch if it isn’t the right fit</li>
-        <li>${tick}A half-price first lesson</li>
-        <li>${tick}A short progress report after every lesson</li>
-        <li>${tick}Free rescheduling with 24 hours’ notice</li>
-        <li>${tick}No signup fees and no contracts</li>
-      </ul>
-      <p class="pr-plans"><b>Plans:</b> pay as you go · 10-lesson term packages (lower hourly rate) · matric intensives with senior specialists · sibling discounts.</p>
-    </div>
-    <form class="card pr-form" data-lead="pricing_request" novalidate>
-      <div class="hp" aria-hidden="true"><label>Leave this field empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
-      <div class="pr-fields">
-      <h3>Send me the price guide</h3>
-      <div class="field"><label for="pr_name">Your name *</label><input id="pr_name" name="student" type="text" required autocomplete="name"><span class="err-msg"></span></div>
-      <div class="field"><label for="pr_email">Email *</label><input id="pr_email" name="email" type="email" required autocomplete="email" placeholder="We’ll send the prices here"><span class="err-msg"></span></div>
-      <div class="field"><label for="pr_phone">WhatsApp number <small>(optional)</small></label><input id="pr_phone" name="phone" type="tel" autocomplete="tel"></div>
-      <div class="form-grid">
-        <div class="field"><label for="pr_grade">Grade</label><select id="pr_grade" name="grade"><option value="">Choose…</option><option>Grade 1–3</option><option>Grade 4–7</option><option>Grade 8–9</option><option>Grade 10</option><option>Grade 11</option><option>Matric (Grade 12)</option><option>IGCSE / AS / A-Level</option><option>IB</option><option>University</option></select></div>
-        <div class="field"><label for="pr_mode">Lessons</label><select id="pr_mode" name="lesson_type"><option value="">Choose…</option><option>Online</option><option>In person (Cape Town)</option><option>Not sure yet</option></select></div>
-      </div>
-      </div>
-      <button class="btn btn-primary" type="submit" style="width:100%;margin-top:6px">Email me the prices</button>
-      <p class="form-note">We reply instantly by email. We never share your details.</p>
-      <div class="form-success" style="display:none;text-align:center;padding:18px 0">
-        <h3>Check your inbox 📬</h3>
-        <p style="color:var(--slate)">The price guide is on its way. If it isn’t there in a few minutes, check your spam folder or <a href="https://wa.me/${SITE.whatsapp}" style="color:var(--blue)">WhatsApp us</a>.</p>
-      </div>
-    </form>
-  </div>
-</div></section>
-${reviewsBlock()}
-${ctaBlock()}` }));
-}
-
 // ============ ABOUT ============
 write('about/index.html', layout({
   title: 'About Whiz Tutoring | 9 Years of Tutoring Excellence in Cape Town',
@@ -729,6 +686,7 @@ ${statsBlock}
     <span class="eyebrow">Our mission</span>
     <h2 style="font-size:29px">Great teaching shouldn't depend on which school you attend</h2>
     <p style="color:var(--slate);margin-top:16px">We pair learners across Cape Town — and increasingly the rest of South Africa and Zambia — with tutors from the country's leading universities. Not just people who know the work, but people who can explain it, encourage, and rebuild the confidence that struggling in a subject quietly erodes.</p>
+    ${scene('scenes/studying.jpg', 'A learner working through her notes at a desk')}
     <div class="timeline">
       <div class="tl-item"><b>2017</b><p>Founded in Cape Town by three UCT students tutoring maths from a res common room.</p></div>
       <div class="tl-item"><b>2019</b><p>Expanded across the Cape Town metro; launched formal tutor screening and training.</p></div>
@@ -776,7 +734,7 @@ POSTS.forEach((p, i) => {
   </header>
   <div class="article-body">${p.body}</div>
   <div class="card article-cta" style="background:var(--blue-tint);border-color:#D6E4FF;display:flex;gap:20px;align-items:center;flex-wrap:wrap;justify-content:space-between">
-    <div><h3 style="font-size:19px">Want one-on-one help with this?</h3><p style="color:var(--slate);font-size:14.5px;margin-top:4px">Our screened Cape Town tutors cover exactly this — first lesson half price.</p></div>
+    <div><h3 style="font-size:19px">Want one-on-one help with this?</h3><p style="color:var(--slate);font-size:14.5px;margin-top:4px">Our screened Cape Town tutors cover exactly this, online or at home.</p></div>
     <button class="btn btn-primary" onclick="openBooking()">Book a Tutor</button>
   </div>
   <div class="post-nav">
@@ -834,6 +792,7 @@ ${pageHero('Become a tutor', 'Earn well doing work that matters', 'Join 300+ tut
       <li>${TICK}<span><b>Training & materials.</b> Teaching workshops, lesson templates and a full past-paper bank.</span></li>
       <li>${TICK}<span><b>A real CV line.</b> A reference and verified teaching record when you graduate.</span></li>
     </ul>
+    ${scene('scenes/uni-students.jpg', 'University students smiling together in a lecture hall')}
     <div class="card" style="background:var(--gray);border-style:dashed;padding:24px">
       <b style="font-family:var(--font-display)">Requirements</b>
       <p style="font-size:14.5px;color:var(--slate);margin-top:6px">Currently enrolled at (or graduated from) a recognised university · 70%+ in the subjects you'll teach · pass our subject test & teaching demo · clear background check.</p>
@@ -883,7 +842,7 @@ ${pageHero('Legal', 'Privacy Policy', 'How we handle the information you share w
 </div></section>` }));
 
 // ============ SITEMAP + ROBOTS + REDIRECTS ============
-const urls = ['/', '/subjects/', '/areas/', '/tutors/', '/pricing/', '/about/', '/blog/', '/contact/', '/become-a-tutor/',
+const urls = ['/', '/subjects/', '/areas/', '/tutors/', '/about/', '/blog/', '/contact/', '/become-a-tutor/',
   ...SUBJECT_PAGES.map(p => `/${p.slug}/`),
   ...SUBURBS.map(s => `/areas/${s.slug}/`),
   ...POSTS.map(p => `/blog/${p.slug}/`)];
@@ -896,6 +855,6 @@ write('robots.txt', `User-agent: *
 Allow: /
 
 Sitemap: ${SITE.domain}/sitemap.xml`);
-write('_redirects', `/api/*  /.netlify/functions/:splat  200\n`);
+write('_redirects', `/api/*  /.netlify/functions/:splat  200\n/pricing/*  /contact/  301\n/pricing  /contact/  301\n`);
 
 console.log(`Built ${urls.length} pages → dist/`);

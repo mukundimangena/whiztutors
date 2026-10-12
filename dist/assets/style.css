@@ -526,7 +526,7 @@ img{height:auto}
 .wz-nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:22px}
 .wz-nav #wzNext,.wz-nav #wzSubmit{margin-left:auto}
 .wz-nav:not(:has(:not([hidden]))){display:none}
-@media (max-width:480px){.wz-tiles,.wz-two{grid-template-columns:1fr}}
+@media (max-width:480px){.wz-two{grid-template-columns:1fr}}
 
 /* ===== Hero quick-start ===== */
 .quick-start{margin-top:26px}
@@ -609,13 +609,96 @@ img{height:auto}
 .logo-atom{width:48px;height:48px;flex:none}
 @media (max-width:720px){ .logo-atom{width:40px;height:40px} }
 
-/* private pricing: request form */
-.price-request{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;max-width:1000px;margin:0 auto}
-.pr-list{list-style:none;padding:0;margin:20px 0}
-.pr-list li{display:flex;gap:10px;align-items:flex-start;padding:7px 0;color:var(--slate)}
-.pr-list svg{flex:none;color:var(--teal);margin-top:4px}
-.pr-plans{font-size:15px;color:var(--slate);background:var(--gray);border-radius:14px;padding:16px 18px}
-.pr-form{padding:30px}
-.pr-form h3{margin-bottom:16px}
-.pr-form .field{margin-bottom:14px}
-@media (max-width:860px){.price-request{grid-template-columns:1fr;gap:28px}}
+
+/* scene photos (src/img/scenes) */
+.scene{margin:24px 0;border-radius:20px;overflow:hidden;box-shadow:var(--shadow-sm)}
+.scene img{display:block;width:100%;height:auto;aspect-ratio:5/3;object-fit:cover}
+.hero-photo img{object-position:45% center}
+/* illustrated avatars sit on their own soft background */
+.mt-face:has(img[src$=".svg"]),.tutor-photo:has(img[src$=".svg"]){background:none!important}
+
+/* ===== Phones ===== */
+@media (max-width:720px){
+  /* the sticky bottom bar already has Book a Tutor — keep the top bar to logo + menu so nothing is pushed off-screen */
+  .nav-cta .btn-primary{display:none}
+  .nav-inner{gap:12px;height:72px}
+  .mobile-menu{inset:72px 0 0 0}
+}
+@media (max-width:400px){
+  .logo{font-size:20px;gap:8px}
+  .logo-atom{width:34px;height:34px}
+}
+@media (max-width:720px){
+  /* less scrolling: tighter section rhythm */
+  .section{padding:48px 0}
+  .section.tight{padding:36px 0}
+  .section-head{margin-bottom:28px}
+  h1{font-size:clamp(32px,9vw,40px)}
+  h2{font-size:clamp(25px,7vw,30px)}
+  .lead{font-size:16px}
+  .card{padding:20px}
+
+  /* hero */
+  .hero{padding:104px 0 40px}
+  .hero-photo{inset:0 0 30px 0}
+  .hero-visual{min-height:360px}
+  .quick-start{margin-top:18px}
+
+  /* subjects: two compact columns of name-only tiles */
+  .subject-list{grid-template-columns:1fr 1fr;gap:8px}
+  .subject-list a{padding:10px;gap:9px}
+  .subject-list a>svg{display:none}
+  .sl-ic{width:32px;height:32px;border-radius:9px}
+  .sl-txt b{font-size:13.5px;line-height:1.25}
+
+  /* why-whiz + steps: icon/number beside the text instead of on top */
+  .feature-card{display:grid;grid-template-columns:44px 1fr;column-gap:14px;align-items:start}
+  .feature-card .fc-ic{width:44px;height:44px;margin:0;grid-row:span 2}
+  .feature-card h3{font-size:17px;margin-bottom:4px}
+  .feature-card p{font-size:14.5px}
+  .grid{gap:12px}
+  .steps{gap:12px}
+  .step-card{padding:20px 20px 20px 72px}
+  .step-card::before{position:absolute;left:20px;top:20px;margin:0}
+  .step-card h3{font-size:17px}
+  .step-card p{font-size:14.5px}
+
+  /* tutors: avatar beside name */
+  .meet-grid{gap:12px}
+  .meet-card{display:grid;grid-template-columns:72px 1fr;column-gap:16px;text-align:left;padding:16px;align-items:center}
+  .mt-face{width:72px;height:72px;margin:0;grid-row:span 4;font-size:22px}
+  .meet-card .uni{margin:2px 0 8px}
+  .meet-card .tutor-tags{justify-content:flex-start!important}
+  .mt-mode{margin-top:8px}
+
+  /* reviews: one card fills the screen, the next one peeks in */
+  .gr-card{min-width:84%;max-width:84%}
+
+  .faq-item summary{padding:16px 18px;font-size:15.5px}
+  .faq-item .faq-a{padding:0 18px 18px}
+  .final-cta{border-radius:24px;padding:36px 22px}
+  .final-cta .btn{width:100%}
+  .scene{margin:18px 0}
+}
+@media (max-width:720px){ .stats{padding:28px 22px;gap:18px 14px} }
+@media (max-width:720px){
+  .card.tutor-card{padding:0}
+  .tutor-top{padding:18px 18px 14px}
+  .tutor-body{padding:14px 18px 18px;gap:12px}
+  .tutor-meta{justify-content:space-between}
+  .callback,.magnet{padding:24px 20px;border-radius:20px}
+  .form-card{padding:24px 18px;border-radius:20px}
+  .modal{padding:26px 18px;border-radius:20px;max-height:92vh}
+}
+@media (max-width:720px){
+  .modal-bg{padding:10px}
+  .modal .sub{margin-bottom:16px;font-size:14px}
+  .wizard legend{font-size:17px;margin-bottom:12px}
+  .wz-tiles{gap:8px}
+  .wz-tile{padding:10px;gap:9px;font-size:13.5px}
+  .wz-ic{width:30px;height:30px}
+  .wz-tile-text{grid-column:1/-1}            /* curriculum options keep their description, full width */
+  .wz-tile-big{grid-column:auto}
+  /* Back / Continue / Send stay visible at the bottom of the popup */
+  .wz-nav{position:sticky;bottom:-26px;background:#fff;margin:16px -18px -26px;padding:12px 18px calc(14px + env(safe-area-inset-bottom));border-top:1px solid var(--line);z-index:2}
+}

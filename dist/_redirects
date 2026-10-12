@@ -1,1 +1,3 @@
 /api/*  /.netlify/functions/:splat  200
+/pricing/*  /contact/  301
+/pricing  /contact/  301

@@ -12,6 +12,8 @@ fs.mkdirSync(path.join(DIST, 'assets'), { recursive: true });
 const css = fs.readFileSync('src/base.css', 'utf8') + fs.readFileSync('src/extra.css', 'utf8');
 fs.writeFileSync(path.join(DIST, 'assets/style.css'), css);
 fs.copyFileSync('src/main.js', path.join(DIST, 'assets/main.js'));
+// cache-busting: assets are served as 'immutable', so each build gets a new ?v= tag
+const ASSET_V = require('crypto').createHash('md5').update(css + fs.readFileSync('src/main.js', 'utf8')).digest('hex').slice(0, 8);
 // Real photos: drop files into src/img/ (see src/img/README.md). Anything missing falls back to initials/illustration.
 if (fs.existsSync('src/img')) fs.cpSync('src/img', path.join(DIST, 'assets/img'), { recursive: true, filter: f => !f.endsWith('.md') });
 const hasImg = f => !!f && fs.existsSync(path.join('src/img', f));
@@ -93,7 +95,7 @@ function layout({ title, desc, canonical, body, schemas = [], ogType = 'website'
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/style.css">
+<link rel="stylesheet" href="/assets/style.css?v=${ASSET_V}">
 <script>document.documentElement.classList.add('js')</script>
 ${jsonld(orgSchema)}
 ${jsonld(websiteSchema)}
@@ -106,7 +108,7 @@ ${body}
 </main>
 ${footerHTML()}
 ${chromeHTML()}
-<script src="/assets/main.js" defer></script>
+<script src="/assets/main.js?v=${ASSET_V}" defer></script>
 </body>
 </html>`;
 }

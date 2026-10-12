@@ -61,7 +61,6 @@ const orgSchema = {
   description: 'Premium one-on-one tutoring from South Africa\u2019s top university students and graduates. Online and in person across Cape Town.',
   address: { '@type': 'PostalAddress', addressLocality: 'Cape Town', addressRegion: 'Western Cape', addressCountry: 'ZA' },
   areaServed: [{ '@type': 'City', name: 'Cape Town' }, { '@type': 'Country', name: 'South Africa' }, { '@type': 'Country', name: 'Zambia' }],
-  priceRange: 'R280–R395 per hour',
   aggregateRating: { '@type': 'AggregateRating', ratingValue: SITE.rating, reviewCount: SITE.reviewCount, bestRating: 5 },
   sameAs: [SITE.googleMapsUrl]
 };
@@ -418,7 +417,7 @@ const write = (rel, html) => {
         <button class="btn btn-primary btn-lg" onclick="openBooking()">Book a Tutor ${ARROW}</button>
         <a class="btn btn-ghost btn-lg btn-wa" href="https://wa.me/${SITE.whatsapp}?text=Hi%20Whiz%20Tutoring!%20I%E2%80%99d%20like%20to%20enquire%20about%20a%20tutor." target="_blank" rel="noopener">${WA_SVG.replace('viewBox', 'width="20" height="20" viewBox')} Chat on WhatsApp</a>
       </div>
-      <p class="hero-reassure">${TICK}<span><b>From R280/hour</b> · first lesson half price · free rematch if it\u2019s not the right fit</span></p>
+      <p class="hero-reassure">${TICK}<span><b>Half-price first lesson</b> · no contracts · free rematch if it\u2019s not the right fit</span></p>
       <div class="quick-start">
         <p>Or start here — what do you need help with?</p>
         <div>${['Mathematics', 'Physical Sciences', 'English', 'Accounting', 'Multiple / other'].map(x => `<button type="button" onclick="openBooking('${x}')">${x === 'Multiple / other' ? 'Something else' : x}</button>`).join('')}</div>
@@ -469,7 +468,7 @@ ${statsBlock}
     ${[
       ['M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z', 'Screened tutors from top universities', 'UCT, Stellenbosch, Wits, UP and UJ students and graduates. Subject tests, teaching demos and background checks — fewer than 1 in 8 applicants join.'],
       ['M12 7v5l3 3M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z', 'At home or online, on your schedule', 'Face-to-face anywhere in Cape Town or live whiteboard lessons nationwide. Evenings, weekends and exam-season intensives.'],
-      ['M3 17l6-6 4 4 8-8M14 7h7v7', 'Progress you can see, pricing you can trust', 'A short report after every lesson. From R280/hour with no signup fees or contracts.']
+      ['M3 17l6-6 4 4 8-8M14 7h7v7', 'Progress you can see, pricing you can trust', 'A short report after every lesson, a half-price first lesson, and no signup fees or contracts.']
     ].map(w => `<div class="card feature-card reveal"><div class="fc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${w[0]}"/></svg></div><h3>${w[1]}</h3><p>${w[2]}</p></div>`).join('')}
   </div>
 </div></section>
@@ -668,29 +667,49 @@ ${pageHero('Our tutors', 'Carefully screened. Genuinely brilliant.', 'Top studen
 ${callbackBlock()}
 ${ctaBlock()}` }));
 
-// ============ PRICING ============
+// ============ PRICING (private: prices are emailed on request, never published) ============
 {
   const tick = TICK.replace('viewBox', 'width="18" height="18" viewBox');
   write('pricing/index.html', layout({
-    title: 'Tutoring Prices Cape Town 2026 | From R280/hour — Whiz Tutoring',
-    desc: 'Transparent tutoring prices in Cape Town: from R280/hour on term packages, R320/hour pay-as-you-go, R395/hour matric intensive. No signup fees. Half-price trial.',
+    title: 'Tutoring Prices | Request Our Price Guide — Whiz Tutoring',
+    desc: 'Request the Whiz Tutoring price guide for private tutoring in Cape Town and online. Pay-as-you-go, term packages and matric intensives. Half-price first lesson, no contracts.',
     canonical: '/pricing/',
     schemas: [breadcrumb([['Home', '/'], ['Pricing', '/pricing/']])],
     body: `
-${pageHero('Pricing', 'Simple, honest pricing', 'No signup fees, no contracts. Pay per lesson or save with a package. All prices include tutor matching, progress reports and rescheduling.', '<a href="/">Home</a> / <span>Pricing</span>')}
+${pageHero('Pricing', 'Get our price guide', 'Our rates depend on the grade, the subject and whether lessons are online or at home. Tell us a little about your child and we’ll email you the full price guide straight away.', '<a href="/">Home</a> / <span>Pricing</span>')}
 <section class="section tight"><div class="container">
-  <div class="price-grid">
-    <div class="card price-card"><h3>Pay as you go</h3><div class="amt">R320<small>/hr</small></div><div class="per">Billed per lesson · online</div>
-      <ul><li>${tick}One-on-one online lessons</li><li>${tick}Matched, screened tutor</li><li>${tick}Lesson notes after every session</li><li>${tick}Free cancellation (24h notice)</li></ul>
-      <button class="btn btn-ghost" onclick="openBooking()">Book a lesson</button></div>
-    <div class="card price-card featured"><span class="pop">Most popular</span><h3>Term package</h3><div class="amt">R280<small>/hr</small></div><div class="per">10-lesson pack · online or in person</div>
-      <ul><li>${tick}Everything in Pay as you go</li><li>${tick}Same tutor, same weekly slot</li><li>${tick}Term progress report for parents</li><li>${tick}Past-paper & exam-prep bank</li><li>${tick}WhatsApp homework support</li></ul>
-      <button class="btn btn-primary" onclick="openBooking()">Start with a trial lesson</button></div>
-    <div class="card price-card"><h3>Matric intensive</h3><div class="amt">R395<small>/hr</small></div><div class="per">Grade 11–12 & exam season</div>
-      <ul><li>${tick}Senior specialist tutors</li><li>${tick}Structured exam-prep syllabus</li><li>${tick}Marked mock papers with feedback</li><li>${tick}University application guidance</li></ul>
-      <button class="btn btn-ghost" onclick="openBooking()">Book a lesson</button></div>
+  <div class="price-request">
+    <div class="pr-info">
+      <h2 style="font-size:26px">Every option includes</h2>
+      <ul class="pr-list">
+        <li>${tick}A screened, matched tutor, with a free rematch if it isn’t the right fit</li>
+        <li>${tick}A half-price first lesson</li>
+        <li>${tick}A short progress report after every lesson</li>
+        <li>${tick}Free rescheduling with 24 hours’ notice</li>
+        <li>${tick}No signup fees and no contracts</li>
+      </ul>
+      <p class="pr-plans"><b>Plans:</b> pay as you go · 10-lesson term packages (lower hourly rate) · matric intensives with senior specialists · sibling discounts.</p>
+    </div>
+    <form class="card pr-form" data-lead="pricing_request" novalidate>
+      <div class="hp" aria-hidden="true"><label>Leave this field empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+      <div class="pr-fields">
+      <h3>Send me the price guide</h3>
+      <div class="field"><label for="pr_name">Your name *</label><input id="pr_name" name="student" type="text" required autocomplete="name"><span class="err-msg"></span></div>
+      <div class="field"><label for="pr_email">Email *</label><input id="pr_email" name="email" type="email" required autocomplete="email" placeholder="We’ll send the prices here"><span class="err-msg"></span></div>
+      <div class="field"><label for="pr_phone">WhatsApp number <small>(optional)</small></label><input id="pr_phone" name="phone" type="tel" autocomplete="tel"></div>
+      <div class="form-grid">
+        <div class="field"><label for="pr_grade">Grade</label><select id="pr_grade" name="grade"><option value="">Choose…</option><option>Grade 1–3</option><option>Grade 4–7</option><option>Grade 8–9</option><option>Grade 10</option><option>Grade 11</option><option>Matric (Grade 12)</option><option>IGCSE / AS / A-Level</option><option>IB</option><option>University</option></select></div>
+        <div class="field"><label for="pr_mode">Lessons</label><select id="pr_mode" name="lesson_type"><option value="">Choose…</option><option>Online</option><option>In person (Cape Town)</option><option>Not sure yet</option></select></div>
+      </div>
+      </div>
+      <button class="btn btn-primary" type="submit" style="width:100%;margin-top:6px">Email me the prices</button>
+      <p class="form-note">We reply instantly by email. We never share your details.</p>
+      <div class="form-success" style="display:none;text-align:center;padding:18px 0">
+        <h3>Check your inbox 📬</h3>
+        <p style="color:var(--slate)">The price guide is on its way. If it isn’t there in a few minutes, check your spam folder or <a href="https://wa.me/${SITE.whatsapp}" style="color:var(--blue)">WhatsApp us</a>.</p>
+      </div>
+    </form>
   </div>
-  <p style="text-align:center;color:var(--mist);font-size:14px;margin-top:34px">Trial lessons are 50% off your first hour. In-person lessons carry a small travel supplement depending on area. Sibling discounts available.</p>
 </div></section>
 ${reviewsBlock()}
 ${ctaBlock()}` }));

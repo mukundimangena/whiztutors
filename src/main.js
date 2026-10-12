@@ -173,7 +173,7 @@ async function submitLead(form,btn,type){
 }
 function showSuccess(form){
   const ok = form.querySelector('.form-success');
-  if(ok){ ok.style.display='block'; form.querySelectorAll('.form-grid,.btn,.form-note,.wz-step,.wz-nav,.wz-progress,.wz-crumbs').forEach(el=>el.style.display='none'); }
+  if(ok){ ok.style.display='block'; form.querySelectorAll('.form-grid,.btn,.form-note,.wz-step,.wz-nav,.wz-progress,.wz-crumbs,.pr-fields').forEach(el=>el.style.display='none'); }
   toast("Thank you! We'll contact you within 24 hours to match you with the perfect tutor.");
 }
 window.submitLead = submitLead;

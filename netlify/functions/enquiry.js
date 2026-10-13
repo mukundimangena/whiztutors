@@ -1,9 +1,10 @@
 // POST /api/enquiry — receives lead forms from the site.
-// 1. Validates + spam-checks   2. Emails whiztutors@gmail.com   3. Emails the client a confirmation   4. Stores the lead in Supabase.
-// Env vars required (set in Netlify → Site settings → Environment variables):
+// 1. Validates + spam-checks   2. Emails the Whiz team (NOTIFY_EMAIL)   3. Emails the client a confirmation   4. Stores the lead in Supabase.
+// Env vars (AWS: Lambda environment, set by aws/deploy.js from .env — Netlify: Site settings → Environment variables):
 //   RESEND_API_KEY      – from resend.com (free tier), with a verified sending domain
 //   FROM_EMAIL          – e.g. "Whiz Tutoring <hello@whiztutoring.co.za>"
-//   NOTIFY_EMAIL        – whiztutors@gmail.com
+//   NOTIFY_EMAIL        – comma-separated list of team inboxes that receive every enquiry
+//   REPLY_TO_EMAIL      – where clients’ replies go (default enquiries@whiztutors.co.za)
 //   SUPABASE_URL        – optional, e.g. https://xxxx.supabase.co
 //   SUPABASE_SERVICE_KEY– optional, service-role key (table: leads)
 //   TURNSTILE_SECRET    – optional, Cloudflare Turnstile secret for CAPTCHA verification
@@ -68,7 +69,9 @@ exports.handler = async (event) => {
     <p style="font-size:14px;color:#5A6472">${PRICE_NOTES}</p>`;
 
   // ---------- Compose emails ----------
-  const NOTIFY = process.env.NOTIFY_EMAIL || 'whiztutors@gmail.com';
+  const NOTIFY = (process.env.NOTIFY_EMAIL || 'mukundi@whiztutors.co.za,enquiries@whiztutors.co.za,whiztutors@gmail.com')
+    .split(',').map(e => e.trim()).filter(Boolean);
+  const REPLY_TO = process.env.REPLY_TO_EMAIL || 'enquiries@whiztutors.co.za';
   const FROM = process.env.FROM_EMAIL || 'Whiz Tutoring <onboarding@resend.dev>';
   const rows = Object.entries(clean)
     .filter(([k]) => !['type', 'page', 'ts_loaded', 'ts_sent', 'website', 'turnstileToken'].includes(k))
@@ -109,10 +112,10 @@ exports.handler = async (event) => {
 
   const jobs = [];
   if (process.env.RESEND_API_KEY) {
-    jobs.push(send({ from: FROM, to: [NOTIFY], reply_to: clean.email || undefined, subject: `🎓 New ${type}: ${clean.subject || clean.value || ''} — ${clean.student || clean.parent || clean.email || 'website lead'}`, html: adminHtml }));
+    jobs.push(send({ from: FROM, to: NOTIFY, reply_to: clean.email || undefined, subject: `🎓 New ${type}: ${clean.subject || clean.value || ''} — ${clean.student || clean.parent || clean.email || 'website lead'}`, html: adminHtml }));
     if (clean.email && type === 'pricing_request') {
       const first = (clean.student || '').split(' ')[0];
-      jobs.push(send({ from: FROM, to: [clean.email], reply_to: NOTIFY, subject: 'Your Whiz Tutoring price guide', html: `
+      jobs.push(send({ from: FROM, to: [clean.email], reply_to: REPLY_TO, subject: 'Your Whiz Tutoring price guide', html: `
         <div style="font-family:Inter,Arial,sans-serif;max-width:620px;margin:auto;color:#1B1F24">
           <div style="background:linear-gradient(135deg,#0A2A6B,#0B5FFF);color:#fff;border-radius:14px 14px 0 0;padding:26px">
             <h2 style="margin:0;font-size:22px">Hi${first ? ' ' + first : ''}, here are our prices</h2>
@@ -124,7 +127,7 @@ exports.handler = async (event) => {
             <p style="margin-top:20px">Kind regards,<br><strong>The Whiz Tutoring Team</strong></p>
           </div>
         </div>` }));
-    } else if (clean.email) jobs.push(send({ from: FROM, to: [clean.email], subject: 'We’ve received your enquiry — Whiz Tutoring', html: clientHtml }));
+    } else if (clean.email) jobs.push(send({ from: FROM, to: [clean.email], reply_to: REPLY_TO, subject: 'We’ve received your enquiry — Whiz Tutoring', html: clientHtml }));
   }
 
   // ---------- Store lead (Supabase REST) ----------

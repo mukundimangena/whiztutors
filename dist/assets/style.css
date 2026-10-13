@@ -601,9 +601,9 @@ img{height:auto}
 
 /* university logos in the trust strip (files in src/img/logos/) */
 .logo-row{align-items:center}
-.uni-logo{height:48px;width:auto;max-width:150px;object-fit:contain;filter:grayscale(1);opacity:.65;transition:filter .2s,opacity .2s}
-.uni-logo:hover{filter:none;opacity:1}
-@media (max-width:720px){.uni-logo{height:38px}}
+.uni-logo{width:var(--w);height:auto;max-width:100%;object-fit:contain;filter:grayscale(1);opacity:.7;transition:opacity .2s}
+.uni-logo:hover{opacity:1}
+@media (max-width:720px){.uni-logo{width:calc(var(--w) * .72)}}
 
 /* atom logo mark (src/img/brand/) */
 .logo-atom{width:48px;height:48px;flex:none}

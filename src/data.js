@@ -15,9 +15,9 @@ const SITE = {
   // ---- Public claims: only publish numbers you can back up. Set to '' / [] to hide. ----
   familiesHelped: '1,200+',
   stats: [ // [number, suffix, label]
-    [5000, '+', 'Lessons completed'],
-    [95, '%', 'Student satisfaction'],
-    [300, '+', 'Qualified tutors'],
+    [100, '+', 'Lessons completed'],
+    [90, '%', 'Student satisfaction'],
+    [100, '+', 'Qualified tutors'],
     [9, ' yrs', 'Helping students succeed']
   ],
   googleMapsUrl: 'https://maps.google.com/?q=Whiz+Tutoring+Cape+Town'
@@ -62,7 +62,7 @@ const SUBJECT_PAGES = [
     h1:'Online Tutors — South Africa & Beyond', eyebrow:'Online tutoring · Nationwide',
     lead:'Live one-on-one online lessons with SA\u2019s best university tutors — from anywhere in South Africa or Zambia. Interactive whiteboard, recorded on request.',
     subhead:'Online tutoring done properly',
-    points:['Access the full national pool of 300+ screened tutors','Interactive digital whiteboard — not just a video call','Lesson recordings available for revision','Same tutor, same slot every week for consistency','Works on laptop or tablet; low-data mode available'],
+    points:['Access the full national pool of 100+ screened tutors','Interactive digital whiteboard — not just a video call','Lesson recordings available for revision','Same tutor, same slot every week for consistency','Works on laptop or tablet; low-data mode available'],
     body:'Online tutoring removes the biggest constraint in education: geography. A learner in Mthatha, Polokwane or Lusaka gets the same distinction-level UCT tutor as a family in Claremont. Our online lessons run on an interactive whiteboard where tutor and student write, draw and solve together — far more effective than a webcam pointed at paper. Every subject, every grade, and exam-season intensives that don\u2019t depend on traffic or load-shedding schedules.'},
   { slug:'private-tutor-cape-town', kw:'Private Tutor Cape Town', subject:'All subjects', icon:'🎓',
     title:'Private Tutors in Cape Town | Screened University Tutors',

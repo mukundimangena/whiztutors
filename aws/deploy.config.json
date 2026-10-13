@@ -1,0 +1,10 @@
+{
+  "stackName": "whiztutors-site",
+  "region": "us-east-1",
+  "domainName": "www.whiztutors.co.za",
+  "apexDomain": "whiztutors.co.za",
+  "hostedZoneId": "",
+  "fromEmail": "Whiz Tutoring <onboarding@resend.dev>",
+  "notifyEmail": "mukundi@whiztutors.co.za,enquiries@whiztutors.co.za,whiztutors@gmail.com",
+  "replyToEmail": "enquiries@whiztutors.co.za"
+}

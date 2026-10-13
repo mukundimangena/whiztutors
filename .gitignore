@@ -2,3 +2,6 @@
 _backup_before_fixes/
 node_modules/
 netlify/functions/resend.js
+
+# AWS deploy build output
+aws/.build/

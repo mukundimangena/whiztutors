@@ -5,6 +5,9 @@
   "description": "Whiz Tutoring - lead-generation static site with serverless enquiry + Google reviews functions",
   "scripts": {
     "build": "node build.js",
-    "preview": "npx serve dist"
+    "preview": "npx serve dist",
+    "deploy:aws": "node aws/deploy.js",
+    "deploy:aws:site": "node aws/deploy.js --site-only",
+    "setup:github": "node aws/setup-github.js"
   }
 }

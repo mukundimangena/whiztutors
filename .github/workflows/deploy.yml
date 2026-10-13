@@ -1,0 +1,59 @@
+# Pull requests: build the site to check nothing is broken (no AWS access).
+# Push to main:  build and publish to S3 + CloudFront (www.whiztutors.co.za).
+# Changes to the form/reviews functions or aws/template.yaml are still deployed from your
+# computer with `npm run deploy:aws`, because they need the secrets in .env.
+name: Build and deploy
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:        # "Run workflow" button in the Actions tab
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false  # never stop an upload half-way
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build site
+        run: node build.js
+      - name: Check every page was generated
+        run: |
+          test -f dist/index.html
+          test -f dist/sitemap.xml
+          echo "$(find dist -name index.html | wc -l) pages built"
+
+  deploy:
+    needs: build
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write       # lets GitHub prove to AWS who it is (OIDC) — no stored keys
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: us-east-1
+      - name: Build and upload
+        run: node aws/deploy.js --site-only
+      - name: Smoke test
+        run: |
+          sleep 20
+          code=$(curl -s -o /dev/null -w "%{http_code}" https://www.whiztutors.co.za/)
+          echo "Home page returned $code"
+          test "$code" = "200"

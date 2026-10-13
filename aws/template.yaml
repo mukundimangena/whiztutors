@@ -1,0 +1,357 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  Whiz Tutoring website — private S3 bucket behind CloudFront (HTTPS), plus the
+  enquiry form and Google reviews endpoints as Lambda functions behind API Gateway,
+  served from the same domain under /api/*. Deploy with: npm run deploy:aws
+
+# Everything lives in us-east-1 because CloudFront only accepts certificates from that region.
+
+Parameters:
+  DomainName:
+    Type: String
+    Default: ''
+    Description: Main site address, e.g. www.whiztutors.co.za. Leave empty to test on the *.cloudfront.net address first.
+  ApexDomain:
+    Type: String
+    Default: ''
+    Description: Bare domain that should redirect to DomainName, e.g. whiztutors.co.za. Optional.
+  HostedZoneId:
+    Type: String
+    Default: ''
+    Description: Route 53 hosted zone for the domain. If set, certificate validation and DNS records are created automatically.
+  ResendApiKey:
+    Type: String
+    NoEcho: true
+    Default: ''
+  FromEmail:
+    Type: String
+    Default: 'Whiz Tutoring <onboarding@resend.dev>'
+  NotifyEmail:
+    Type: String
+    Default: 'mukundi@whiztutors.co.za,enquiries@whiztutors.co.za,whiztutors@gmail.com'
+    Description: Comma-separated inboxes that receive every enquiry.
+  ReplyToEmail:
+    Type: String
+    Default: 'enquiries@whiztutors.co.za'
+  SupabaseUrl:
+    Type: String
+    Default: ''
+  SupabaseServiceKey:
+    Type: String
+    NoEcho: true
+    Default: ''
+  TurnstileSecret:
+    Type: String
+    NoEcho: true
+    Default: ''
+  GooglePlacesApiKey:
+    Type: String
+    NoEcho: true
+    Default: ''
+  GooglePlaceId:
+    Type: String
+    Default: ''
+
+Conditions:
+  HasDomain: !Not [!Equals [!Ref DomainName, '']]
+  HasApex: !And [!Condition HasDomain, !Not [!Equals [!Ref ApexDomain, '']]]
+  HasZone: !And [!Condition HasDomain, !Not [!Equals [!Ref HostedZoneId, '']]]
+  HasZoneAndApex: !And [!Condition HasZone, !Condition HasApex]
+
+Resources:
+  # ---------------- Website files ----------------
+  SiteBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      OwnershipControls:
+        Rules: [{ ObjectOwnership: BucketOwnerEnforced }]
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault: { SSEAlgorithm: AES256 }
+
+  # Only this CloudFront distribution may read the bucket. ListBucket lets missing pages return 404 (not 403).
+  SiteBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref SiteBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: { Service: cloudfront.amazonaws.com }
+            Action: [s3:GetObject, s3:ListBucket]
+            Resource: [!GetAtt SiteBucket.Arn, !Sub '${SiteBucket.Arn}/*']
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${Distribution}'
+
+  OriginAccessControl:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub '${AWS::StackName}-oac'
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  # Runs on every page request: bare domain → www, /pricing → /contact/, /about → /about/, /about/ → /about/index.html
+  RewriteFunction:
+    Type: AWS::CloudFront::Function
+    Properties:
+      Name: !Sub '${AWS::StackName}-rewrite'
+      AutoPublish: true
+      FunctionConfig:
+        Comment: Pretty URLs and redirects for the static site
+        Runtime: cloudfront-js-2.0
+      FunctionCode: !Sub |
+        var APEX = '${ApexDomain}';
+        var WWW = '${DomainName}';
+        function qs(q) {
+          var p = [];
+          for (var k in q) {
+            var v = q[k];
+            if (v.multiValue) { for (var i = 0; i < v.multiValue.length; i++) p.push(k + '=' + v.multiValue[i].value); }
+            else p.push(v.value === '' ? k : k + '=' + v.value);
+          }
+          return p.length ? '?' + p.join('&') : '';
+        }
+        function go(location) {
+          return { statusCode: 301, statusDescription: 'Moved Permanently',
+                   headers: { location: { value: location }, 'cache-control': { value: 'max-age=3600' } } };
+        }
+        function handler(event) {
+          var r = event.request, uri = r.uri;
+          var host = r.headers.host ? r.headers.host.value : '';
+          if (APEX && WWW && host === APEX) return go('https://' + WWW + uri + qs(r.querystring));
+          if (uri === '/pricing' || uri.indexOf('/pricing/') === 0) return go('/contact/');
+          if (uri.charAt(uri.length - 1) === '/') { r.uri = uri + 'index.html'; return r; }
+          if (uri.lastIndexOf('.') < uri.lastIndexOf('/')) return go(uri + '/' + qs(r.querystring));
+          return r;
+        }
+
+  Certificate:
+    Type: AWS::CertificateManager::Certificate
+    Condition: HasDomain
+    Properties:
+      DomainName: !Ref DomainName
+      SubjectAlternativeNames: !If [HasApex, [!Ref ApexDomain], !Ref AWS::NoValue]
+      ValidationMethod: DNS
+      DomainValidationOptions: !If
+        - HasZone
+        - - DomainName: !Ref DomainName
+            HostedZoneId: !Ref HostedZoneId
+          - !If [HasApex, { DomainName: !Ref ApexDomain, HostedZoneId: !Ref HostedZoneId }, !Ref AWS::NoValue]
+        - !Ref AWS::NoValue
+
+  Distribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Comment: Whiz Tutoring website
+        Aliases: !If [HasDomain, !If [HasApex, [!Ref DomainName, !Ref ApexDomain], [!Ref DomainName]], !Ref AWS::NoValue]
+        ViewerCertificate: !If
+          - HasDomain
+          - { AcmCertificateArn: !Ref Certificate, SslSupportMethod: sni-only, MinimumProtocolVersion: TLSv1.2_2021 }
+          - { CloudFrontDefaultCertificate: true }
+        DefaultRootObject: index.html
+        HttpVersion: http2and3
+        IPV6Enabled: true
+        PriceClass: PriceClass_200        # includes edge locations in South Africa
+        Origins:
+          - Id: site
+            DomainName: !GetAtt SiteBucket.RegionalDomainName
+            OriginAccessControlId: !GetAtt OriginAccessControl.Id
+            S3OriginConfig: { OriginAccessIdentity: '' }
+          - Id: api
+            DomainName: !Select [1, !Split ['//', !GetAtt HttpApi.ApiEndpoint]]
+            CustomOriginConfig:
+              OriginProtocolPolicy: https-only
+              OriginSSLProtocols: [TLSv1.2]
+        DefaultCacheBehavior:
+          TargetOriginId: site
+          ViewerProtocolPolicy: redirect-to-https
+          Compress: true
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6          # Managed-CachingOptimized (honours our Cache-Control headers)
+          ResponseHeadersPolicyId: 67f7725c-6f97-4210-82d7-5512b31e9d03 # Managed-SecurityHeadersPolicy (HSTS, nosniff, frame options…)
+          FunctionAssociations:
+            - EventType: viewer-request
+              FunctionARN: !GetAtt RewriteFunction.FunctionMetadata.FunctionARN
+        CacheBehaviors:
+          - PathPattern: /api/*
+            TargetOriginId: api
+            ViewerProtocolPolicy: https-only
+            AllowedMethods: [GET, HEAD, OPTIONS, PUT, POST, PATCH, DELETE]
+            Compress: true
+            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad          # Managed-CachingDisabled
+            OriginRequestPolicyId: b689b0a8-53d0-40ab-baf2-68738e2966ac  # Managed-AllViewerExceptHostHeader
+        CustomErrorResponses:
+          - { ErrorCode: 404, ResponseCode: 404, ResponsePagePath: /404.html, ErrorCachingMinTTL: 60 }
+          - { ErrorCode: 403, ResponseCode: 404, ResponsePagePath: /404.html, ErrorCachingMinTTL: 60 }
+
+  # ---------------- /api/enquiry and /api/reviews ----------------
+  ApiFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: { Service: lambda.amazonaws.com }
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+  EnquiryFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: Website enquiry form — emails the team and the client, stores the lead
+      Runtime: nodejs22.x
+      Architectures: [arm64]
+      Handler: index.enquiry
+      Code: .build/lambda            # zipped and uploaded by `aws cloudformation package`
+      Role: !GetAtt ApiFunctionRole.Arn
+      Timeout: 15
+      MemorySize: 256
+      Environment:
+        Variables:
+          RESEND_API_KEY: !Ref ResendApiKey
+          FROM_EMAIL: !Ref FromEmail
+          NOTIFY_EMAIL: !Ref NotifyEmail
+          REPLY_TO_EMAIL: !Ref ReplyToEmail
+          SUPABASE_URL: !Ref SupabaseUrl
+          SUPABASE_SERVICE_KEY: !Ref SupabaseServiceKey
+          TURNSTILE_SECRET: !Ref TurnstileSecret
+
+  ReviewsFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: Latest Google reviews for the website
+      Runtime: nodejs22.x
+      Architectures: [arm64]
+      Handler: index.reviews
+      Code: .build/lambda
+      Role: !GetAtt ApiFunctionRole.Arn
+      Timeout: 10
+      MemorySize: 256
+      Environment:
+        Variables:
+          GOOGLE_PLACES_API_KEY: !Ref GooglePlacesApiKey
+          GOOGLE_PLACE_ID: !Ref GooglePlaceId
+
+  EnquiryLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${EnquiryFunction}'
+      RetentionInDays: 30
+  ReviewsLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${ReviewsFunction}'
+      RetentionInDays: 30
+
+  HttpApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: !Sub '${AWS::StackName}-api'
+      ProtocolType: HTTP
+
+  # Throttling caps abuse (and cost) if someone hammers the form endpoint.
+  ApiStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref HttpApi
+      StageName: $default
+      AutoDeploy: true
+      DefaultRouteSettings:
+        ThrottlingBurstLimit: 20
+        ThrottlingRateLimit: 10
+
+  EnquiryIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref HttpApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !GetAtt EnquiryFunction.Arn
+      PayloadFormatVersion: '2.0'
+  ReviewsIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref HttpApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !GetAtt ReviewsFunction.Arn
+      PayloadFormatVersion: '2.0'
+
+  EnquiryRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: POST /api/enquiry
+      Target: !Sub 'integrations/${EnquiryIntegration}'
+  ReviewsRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: GET /api/reviews
+      Target: !Sub 'integrations/${ReviewsIntegration}'
+
+  EnquiryInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref EnquiryFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*'
+  ReviewsInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref ReviewsFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*'
+
+  # ---------------- DNS (only when the domain is in Route 53) ----------------
+  DnsRecords:
+    Type: AWS::Route53::RecordSetGroup
+    Condition: HasZone
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      RecordSets:
+        - Name: !Ref DomainName
+          Type: A
+          AliasTarget: { DNSName: !GetAtt Distribution.DomainName, HostedZoneId: Z2FDTNDATAQYW2 }
+        - Name: !Ref DomainName
+          Type: AAAA
+          AliasTarget: { DNSName: !GetAtt Distribution.DomainName, HostedZoneId: Z2FDTNDATAQYW2 }
+  ApexDnsRecords:
+    Type: AWS::Route53::RecordSetGroup
+    Condition: HasZoneAndApex
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      RecordSets:
+        - Name: !Ref ApexDomain
+          Type: A
+          AliasTarget: { DNSName: !GetAtt Distribution.DomainName, HostedZoneId: Z2FDTNDATAQYW2 }
+        - Name: !Ref ApexDomain
+          Type: AAAA
+          AliasTarget: { DNSName: !GetAtt Distribution.DomainName, HostedZoneId: Z2FDTNDATAQYW2 }
+
+Outputs:
+  BucketName:
+    Value: !Ref SiteBucket
+  DistributionId:
+    Value: !Ref Distribution
+  CloudFrontDomain:
+    Description: Point your domain's DNS here (CNAME for www, or an ALIAS/ANAME for the bare domain)
+    Value: !GetAtt Distribution.DomainName
+  WebsiteUrl:
+    Value: !If [HasDomain, !Sub 'https://${DomainName}', !Sub 'https://${Distribution.DomainName}']
+  ApiEndpoint:
+    Value: !GetAtt HttpApi.ApiEndpoint

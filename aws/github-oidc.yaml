@@ -1,0 +1,72 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  Lets GitHub Actions deploy the Whiz Tutoring site without stored AWS keys (OIDC).
+  Only workflows running on the main branch of mukundimangena/whiztutors can use the role,
+  and the role can only upload the site files and clear the CloudFront cache.
+  Create once with:  node aws/setup-github.js
+
+Parameters:
+  GitHubRepo:
+    Type: String
+    Default: mukundimangena/whiztutors
+  Branch:
+    Type: String
+    Default: main
+  SiteStackName:
+    Type: String
+    Default: whiztutors-site
+    Description: The stack created by `npm run deploy:aws` (holds the bucket and CloudFront distribution).
+  SiteBucketName:
+    Type: String
+    Description: BucketName output of the site stack
+  DistributionId:
+    Type: String
+    Description: DistributionId output of the site stack
+
+Resources:
+  GitHubOidcProvider:
+    Type: AWS::IAM::OIDCProvider
+    Properties:
+      Url: https://token.actions.githubusercontent.com
+      ClientIdList: [sts.amazonaws.com]
+      ThumbprintList: [6938fd4d98bab03faadb97b34396831e3780aea1, 1c58a3a8518e8759bf075b76b750d4f2df264fcd]
+
+  DeployRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: whiztutors-github-deploy
+      MaxSessionDuration: 3600
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: { Federated: !Ref GitHubOidcProvider }
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: sts.amazonaws.com
+                token.actions.githubusercontent.com:sub: !Sub 'repo:${GitHubRepo}:ref:refs/heads/${Branch}'
+      Policies:
+        - PolicyName: deploy-site-files
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Sid: ReadStackOutputs
+                Effect: Allow
+                Action: cloudformation:DescribeStacks
+                Resource: !Sub 'arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${SiteStackName}/*'
+              - Sid: SyncSiteBucket
+                Effect: Allow
+                Action: [s3:ListBucket, s3:GetObject, s3:PutObject, s3:DeleteObject]
+                Resource:
+                  - !Sub 'arn:aws:s3:::${SiteBucketName}'
+                  - !Sub 'arn:aws:s3:::${SiteBucketName}/*'
+              - Sid: ClearCdnCache
+                Effect: Allow
+                Action: cloudfront:CreateInvalidation
+                Resource: !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${DistributionId}'
+
+Outputs:
+  RoleArn:
+    Description: Put this in the GitHub repo as the AWS_DEPLOY_ROLE_ARN variable
+    Value: !GetAtt DeployRole.Arn

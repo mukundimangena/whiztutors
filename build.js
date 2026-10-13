@@ -18,6 +18,15 @@ const ASSET_V = require('crypto').createHash('md5').update(css + fs.readFileSync
 if (fs.existsSync('src/img')) fs.cpSync('src/img', path.join(DIST, 'assets/img'), { recursive: true, filter: f => !f.endsWith('.md') });
 if (fs.existsSync('src/img/brand/favicon.ico')) fs.copyFileSync('src/img/brand/favicon.ico', path.join(DIST, 'favicon.ico'));
 const hasImg = f => !!f && fs.existsSync(path.join('src/img', f));
+// Display size for a university logo: same visual area for every logo (≈ 48×120px), whatever its shape.
+// Reads the pixel size straight from the PNG header; other formats fall back to a 2.5:1 box.
+const logoSize = f => {
+  let ratio = 2.5;
+  const buf = fs.readFileSync(path.join('src/img', f));
+  if (buf.toString('ascii', 12, 16) === 'IHDR') ratio = buf.readUInt32BE(16) / buf.readUInt32BE(20);
+  const h = Math.min(60, Math.sqrt(5760 / ratio));
+  return [Math.round(h * ratio), Math.round(h)];
+};
 const scene = (f, alt) => hasImg(f) ? `<figure class="scene reveal"><img src="/assets/img/${f}" alt="${alt}" loading="lazy" width="1000" height="600"></figure>` : '';
 // tutor picture: real photo if provided → illustrated avatar → initials
 const tutorFace = t => {
@@ -76,7 +85,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
 const reviewsSchema = SEED_REVIEWS.map(r => ({ '@context': 'https://schema.org', '@type': 'Review', itemReviewed: { '@id': SITE.domain + '/#organization' }, author: { '@type': 'Person', name: r.author }, reviewRating: { '@type': 'Rating', ratingValue: r.rating, bestRating: 5 }, reviewBody: r.text }));
 
 // ---------- layout ----------
-function layout({ title, desc, canonical, body, schemas = [], ogType = 'website' }) {
+function layout({ title, desc, canonical, body, schemas = [], ogType = 'website', robots = 'index,follow' }) {
   const url = SITE.domain + canonical;
   return `<!DOCTYPE html>
 <html lang="en-ZA">
@@ -86,7 +95,7 @@ function layout({ title, desc, canonical, body, schemas = [], ogType = 'website'
 <title>${title}</title>
 <meta name="description" content="${desc}">
 <link rel="canonical" href="${url}">
-<meta name="robots" content="index,follow">
+<meta name="robots" content="${robots}">
 <meta property="og:type" content="${ogType}">
 <meta property="og:site_name" content="${SITE.name}">
 <meta property="og:title" content="${title}">
@@ -313,7 +322,9 @@ const trustStrip = `
     <p>Our tutors study at, or graduated from</p>
     <div class="logo-row">
       ${UNIVERSITIES.map(u => { const f = ['svg', 'png', 'webp'].map(x => `logos/${u.file}.${x}`).find(hasImg);
-        return f ? `<img class="uni-logo" src="/assets/img/${f}" alt="${u.name}" title="${u.name}" loading="lazy" height="48">` : `<span title="${u.name}">${u.short}</span>`; }).join('')}
+        if (!f) return `<span title="${u.name}">${u.short}</span>`;
+        const [w, h] = logoSize(f);
+        return `<img class="uni-logo" src="/assets/img/${f}" alt="${u.name}" title="${u.name}" loading="lazy" width="${w}" height="${h}" style="--w:${w}px">`; }).join('')}
     </div>
     <ul class="trust-points">
       <li>${TICK}Interviewed &amp; subject-tested</li><li>${TICK}Background checked</li><li>${TICK}Free rematch if it\u2019s not the right fit</li>
@@ -667,7 +678,7 @@ ${pageHero('Our tutors', 'Carefully screened. Genuinely brilliant.', 'Top studen
       <div class="tutor-tags">${t.subs.map(x => `<span class="chip">${x}</span>`).join('')}</div>
       <button class="btn btn-ghost btn-sm" onclick="openBooking('${t.subs[0]}')">Book with ${t.name.split(' ')[0]}</button>
     </div></div>`).join('')}</div>
-  <p style="text-align:center;color:var(--slate);margin-top:40px">These are a few of our 300+ tutors. Send an enquiry and we'll match the right one to you.</p>
+  <p style="text-align:center;color:var(--slate);margin-top:40px">These are a few of our 100+ tutors. Send an enquiry and we'll match the right one to you.</p>
 </div></section>
 ${callbackBlock()}
 ${ctaBlock()}` }));
@@ -675,7 +686,7 @@ ${ctaBlock()}` }));
 // ============ ABOUT ============
 write('about/index.html', layout({
   title: 'About Whiz Tutoring | 9 Years of Tutoring Excellence in Cape Town',
-  desc: 'Whiz Tutoring: founded in Cape Town in 2017, now 300+ screened university tutors, 5,000+ lessons and a 95% satisfaction rate across SA and Zambia.',
+  desc: 'Whiz Tutoring: founded in Cape Town in 2017, now 100+ screened university tutors and a 90% student satisfaction rate across SA and Zambia.',
   canonical: '/about/',
   schemas: [breadcrumb([['Home', '/'], ['About', '/about/']])],
   body: `
@@ -691,8 +702,8 @@ ${statsBlock}
       <div class="tl-item"><b>2017</b><p>Founded in Cape Town by three UCT students tutoring maths from a res common room.</p></div>
       <div class="tl-item"><b>2019</b><p>Expanded across the Cape Town metro; launched formal tutor screening and training.</p></div>
       <div class="tl-item"><b>2021</b><p>Went online nationwide. Lessons no longer limited by geography — or load-shedding schedules.</p></div>
-      <div class="tl-item"><b>2024</b><p>Crossed 5,000 lessons and launched cross-border tutoring for families in Zambia.</p></div>
-      <div class="tl-item"><b>Today</b><p>300+ tutors, a 95% satisfaction rate, and one unchanged rule: every learner gets a tutor we'd want for our own family.</p></div>
+      <div class="tl-item"><b>2024</b><p>Launched cross-border tutoring for families in Zambia.</p></div>
+      <div class="tl-item"><b>Today</b><p>100+ tutors, a 90% student satisfaction rate, and one unchanged rule: every learner gets a tutor we'd want for our own family.</p></div>
     </div>
   </div>
   <div class="value-list" style="grid-template-columns:1fr;align-content:start">
@@ -781,7 +792,7 @@ write('become-a-tutor/index.html', layout({
   canonical: '/become-a-tutor/',
   schemas: [breadcrumb([['Home', '/'], ['Become a Tutor', '/become-a-tutor/']])],
   body: `
-${pageHero('Become a tutor', 'Earn well doing work that matters', 'Join 300+ tutors from SA\u2019s top universities. Set your own hours, teach subjects you love, and get paid reliably — R180–R350 per hour.', '<a href="/">Home</a> / <span>Become a Tutor</span>')}
+${pageHero('Become a tutor', 'Earn well doing work that matters', 'Join 100+ tutors from SA\u2019s top universities. Set your own hours, teach subjects you love, and get paid reliably — R180–R350 per hour.', '<a href="/">Home</a> / <span>Become a Tutor</span>')}
 <section class="section tight"><div class="container landing-two">
   <div>
     <h2 style="font-size:27px">Why tutors choose Whiz</h2>
@@ -839,6 +850,22 @@ ${pageHero('Legal', 'Privacy Policy', 'How we handle the information you share w
   <h2>Your rights</h2>
   <p>You can ask to see, correct or delete your information, or unsubscribe at any time, by emailing <a href="mailto:${SITE.email}">${SITE.email}</a> or WhatsApping <a href="https://wa.me/${SITE.whatsapp}">${waDisplay}</a>. You may also lodge a complaint with the Information Regulator of South Africa.</p>
   <p style="color:var(--mist);font-size:14px;margin-top:30px">Responsible party: Whiz Tutoring (Pty) Ltd, Cape Town.</p>
+</div></section>` }));
+
+// ============ 404 (served by CloudFront for any missing page) ============
+write('404.html', layout({
+  title: 'Page not found — Whiz Tutoring',
+  desc: 'This page doesn\u2019t exist. Find a tutor, browse subjects or contact Whiz Tutoring.',
+  canonical: '/404.html', robots: 'noindex',
+  body: `
+${pageHero('Page not found', 'We couldn\u2019t find that page', 'It may have moved, or the link may be mistyped. These will get you where you\u2019re going:', '<a href="/">Home</a> / <span>Not found</span>')}
+<section class="section tight"><div class="container">
+  <div style="display:flex;gap:12px;flex-wrap:wrap">
+    <button class="btn btn-primary" onclick="openBooking()">Book a Tutor</button>
+    <a class="btn btn-ghost" href="/">Home page</a>
+    <a class="btn btn-ghost" href="/subjects/">Subjects</a>
+    <a class="btn btn-ghost" href="/contact/">Contact us</a>
+  </div>
 </div></section>` }));
 
 // ============ SITEMAP + ROBOTS + REDIRECTS ============
